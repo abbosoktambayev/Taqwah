@@ -1,21 +1,33 @@
- //
-//  ContentView.swift
-//  Taqwah
-//
-//  Created by Abbos Oktambayev on 20.11.2025.
-//
-
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Updated Code!")
+        TabView {
+            HomeView()
+                .tabItem {
+                    Image(systemName: "house")
+                    Text("Home")
+                }
+
+            PrayersView()
+                .tabItem {
+                    Image(systemName: "checkmark.circle")
+                    Text("Prayers")
+                }
+
+            AthkarView()
+                .tabItem {
+                    Image(systemName: "bookmark")
+                    Text("Athkar")
+                }
+
+            ServicesView()
+                .tabItem {
+                    Image(systemName: "square.grid.2x2")
+                    Text("Services")
+                }
         }
-        .padding()
+        .accentColor(.green)
     }
 }
 
