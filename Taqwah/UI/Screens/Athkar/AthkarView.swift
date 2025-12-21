@@ -69,17 +69,9 @@ struct AthkarView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color(red: 9/255, green: 51/255, blue: 27/255),
-                        Color(red: 1/255, green: 26/255, blue: 21/255),
-                        Color(.black)
-                    ]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
-
+                AppBackground()
+                    .foregroundColor(.primary)
+                
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 24) {
 

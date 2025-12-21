@@ -6,6 +6,8 @@ struct PrayersView: View {
     @State private var streak: Int = 7
     @State private var completed: Set<String> = ["Fajr", "Dhuhr", "Asr"]
     @Namespace private var animation
+    @Environment(\.colorScheme) private var scheme
+
 
     let prayers: [(name: String, time: String, icon: String)] = [
         ("Fajr", "05:20", "sun.and.horizon.fill"),
@@ -18,17 +20,8 @@ struct PrayersView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // MARK: - Background
-                LinearGradient(
-                    colors: [
-                        Color(red: 9/255, green: 51/255, blue: 27/255),
-                        Color(red: 1/255, green: 26/255, blue: 21/255),
-                        .black
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
+                AppBackground()
+                    .foregroundColor(.primary)
 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 24) {
@@ -47,6 +40,7 @@ struct PrayersView: View {
             }
             .navigationTitle("Prayer Tracker")
             .navigationBarTitleDisplayMode(.large)
+            .foregroundColor(.adaptiveText(scheme))
         }
     }
 
@@ -87,6 +81,7 @@ struct PrayersView: View {
             HStack {
                 Text("Today's Progress")
                     .font(.headline)
+                    .foregroundColor(.adaptiveText(scheme))
 
                 Spacer()
 

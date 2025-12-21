@@ -1,21 +1,15 @@
 import SwiftUI
 
 struct ServicesView: View {
+    @Environment(\.colorScheme) private var scheme
+    
+
 
     var body: some View {
         NavigationStack {
             ZStack {
-                // Background
-                LinearGradient(
-                    colors: [
-                        Color(red: 9/255, green: 51/255, blue: 27/255),
-                        Color(red: 1/255, green: 26/255, blue: 21/255),
-                        .black
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
+                AppBackground()
+                    .foregroundColor(.primary)
 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 24) {
@@ -85,6 +79,7 @@ struct ServicesView: View {
             }
             .navigationTitle("Services")
             .navigationBarTitleDisplayMode(.large)
+            .foregroundColor(.adaptiveText(scheme))
         }
     }
 }

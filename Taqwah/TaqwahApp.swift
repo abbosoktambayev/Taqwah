@@ -1,17 +1,14 @@
-//
-//  TaqwahApp.swift
-//  Taqwah
-//
-//  Created by Abbos Oktambayev on 20.11.2025.
-//
-
 import SwiftUI
 
 @main
 struct TaqwahApp: App {
+
+    @StateObject private var settings = SettingsManager.shared
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashView()
+                .preferredColorScheme(settings.colorScheme)
         }
     }
 }
