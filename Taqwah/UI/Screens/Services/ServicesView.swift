@@ -3,17 +3,17 @@ import SwiftUI
 struct ServicesView: View {
     @Environment(\.colorScheme) private var scheme
     
-
-
     var body: some View {
         NavigationStack {
             ZStack {
+                // Твой кастомный фон
                 AppBackground()
                     .foregroundColor(.primary)
 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 24) {
 
+                        // MARK: - PRAYER TOOLS
                         sectionTitle("PRAYER TOOLS")
 
                         glassGroup {
@@ -32,6 +32,7 @@ struct ServicesView: View {
                             }
                         }
 
+                        // MARK: - APP SETTINGS
                         sectionTitle("APP SETTINGS")
 
                         glassGroup {
@@ -50,6 +51,7 @@ struct ServicesView: View {
                             }
                         }
 
+                        // MARK: - INFORMATION
                         sectionTitle("INFORMATION")
 
                         glassGroup {
@@ -141,6 +143,7 @@ private func serviceRow<Destination: View>(
                 .foregroundColor(.white.opacity(0.4))
         }
         .padding(.vertical, 10)
+        .contentShape(Rectangle()) // <--- ВАЖНО: Делает всю область (включая Spacer) кликабельной
     }
     .buttonStyle(.plain)
 }
