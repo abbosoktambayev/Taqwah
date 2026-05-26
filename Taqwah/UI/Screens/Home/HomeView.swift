@@ -2,34 +2,34 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject private var manager = PrayerTimesManager.shared
-    @Environment(\.colorScheme) private var colorScheme
-    
+    @StateObject private var location = LocationManager.shared
+    @Environment(\.colorScheme) private var scheme
+
     // States for Next Prayer
     @State private var nextPrayerName: String = "Loading..."
     @State private var remainingTime: String = ""
     @State private var nextPrayerTime: String = ""
     @State private var countdownTimer: DispatchSourceTimer?
-    @Environment(\.colorScheme) private var scheme
-    
-    // Вспомогательное свойство для отслеживания изменений (исправляет ошибку компиляции)
+
+    // Identifier for tracking changes
     private var prayerTimesIdentifier: String {
         guard let prayer = manager.todayPrayer else { return "" }
         return "\(prayer.fajr)|\(prayer.dhuhr)|\(prayer.asr)|\(prayer.maghrib)|\(prayer.isha)"
     }
-    
+
     // Dynamic day of week
     private var currentDayName: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "EEEE"
         return formatter.string(from: Date())
     }
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
                 AppBackground()
                     .foregroundColor(.primary)
-                
+
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 26) {
                         headerSection
@@ -45,30 +45,34 @@ struct HomeView: View {
             .foregroundColor(.adaptiveText(scheme))
         }
         .task {
+            location.requestLocationIfNeeded()
             manager.loadIfNeeded()
-            
+
             if let prayer = manager.todayPrayer {
                 updateNextPrayer(prayer: prayer)
                 startCountdownTimer(prayer: prayer)
             }
         }
-        // Упрощенный onChange
         .onChange(of: prayerTimesIdentifier) { _, _ in
             if let prayer = manager.todayPrayer {
                 updateNextPrayer(prayer: prayer)
                 startCountdownTimer(prayer: prayer)
             }
         }
+        // Reload prayer times when location changes
+        .onChange(of: location.latitude) { _, _ in
+            manager.reload(latitude: location.latitude, longitude: location.longitude)
+        }
         .onDisappear {
             stopCountdownTimer()
         }
     }
-    
+
     // MARK: - Timer Logic
-    
+
     private func startCountdownTimer(prayer: PrayerDay) {
         countdownTimer?.cancel()
-        
+
         let timer = DispatchSource.makeTimerSource(queue: DispatchQueue.main)
         timer.schedule(deadline: .now(), repeating: 1.0)
         timer.setEventHandler {
@@ -77,44 +81,32 @@ struct HomeView: View {
         timer.resume()
         countdownTimer = timer
     }
-    
+
     private func stopCountdownTimer() {
         countdownTimer?.cancel()
         countdownTimer = nil
     }
-    // MARK: - Location Icon Styling
 
-    private var locationIconColor: Color {
-        scheme == .light ? .green : .prayerAccent
-    }
-
-    private var locationIconShadow: Color {
-        scheme == .light
-        ? Color.green.opacity(0.35)
-        : Color.prayerAccent.opacity(0.35)
-    }
-    
     // MARK: - UI Sections
-    
+
     private var headerSection: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-
                 Text("As-salamu alaykum")
                     .font(.system(size: 20, weight: .bold))
                     .foregroundColor(.adaptiveText(scheme))
 
                 HStack(spacing: 6) {
                     Image(systemName: "location.fill")
-                        .foregroundColor(locationIconColor)
+                        .foregroundColor(.adaptiveAccent(scheme))
                         .shadow(
-                            color: locationIconShadow,
+                            color: .accentShadow(scheme),
                             radius: 12,
                             y: 6
                         )
                         .font(.caption)
 
-                    Text("Astana, Kazakhstan")
+                    Text(location.displayLocation)
                         .foregroundColor(.secondaryText(scheme))
                 }
             }
@@ -125,162 +117,142 @@ struct HomeView: View {
                 Text(currentDayName)
                     .foregroundColor(.secondaryText(scheme))
 
-                Text("15 Jumada Al-Awwal 1447")
+                Text(currentHijriDateString())
                     .font(.caption)
                     .foregroundColor(.secondaryText(scheme))
             }
         }
         .padding(.horizontal)
     }
-    
-    //Timer color
-    private var timerColor: Color {
-        scheme == .light ? .green : .prayerAccent
-    }
-    
-    //Light under timer
-    private var timerShadow: Color {
-        scheme == .light ? Color.green.opacity(0.35) : Color.prayerAccent.opacity(0.35)
-    }
 
     private var nextPrayerSection: some View {
-            VStack(alignment: .leading, spacing: 16) {
-                Text("Next Prayer")
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Next Prayer")
+                .font(.title2)
+                .bold()
+                .foregroundColor(.adaptiveText(scheme))
+
+            VStack(spacing: 8) {
+                Text(nextPrayerName)
                     .font(.title2)
                     .bold()
                     .foregroundColor(.adaptiveText(scheme))
 
-                VStack(spacing: 8) {
-                    Text(nextPrayerName)
-                        .font(.title2)
-                        .bold()
-                        .foregroundColor(.adaptiveText(scheme))
-
-                    Text(remainingTime)
-                        .font(.system(size: 48, weight: .bold))
-                        .foregroundColor(timerColor)
-                        .shadow(
-                            color: timerShadow,
-                            radius: 12,
-                            y: 6
-                        )
-
-                    Text("at \(nextPrayerTime)")
-                        .foregroundColor(.secondaryText(scheme))
-                        .padding(.top, 6)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 36)
-                .background(
-                    ZStack {
-                        // Основной слой
-                        RoundedRectangle(cornerRadius: 28)
-                            .fill(Color.primary.opacity(scheme == .light ? 0.06 : 0.12))
-
-                        // ВНУТРЕННИЙ СВЕТ (edge glow)
-                        RoundedRectangle(cornerRadius: 28)
-                            .stroke(
-                                LinearGradient(
-                                    colors: [
-                                        Color.white.opacity(scheme == .light ? 0.6 : 0.15),
-                                        Color.clear
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 1.2
-                            )
-                    }
-                )
-                .shadow(
-                    color: Color.black.opacity(scheme == .light ? 0.08 : 0.4),
-                    radius: scheme == .light ? 18 : 30,
-                    y: scheme == .light ? 8 : 16
-                )                .clipShape(RoundedRectangle(cornerRadius: 28))
-            }
-            .padding(.horizontal)
-        }
-    
-    private var todaysPrayerSection: some View {
-            VStack(alignment: .leading, spacing: 16) {
-                Text("Today's Prayers")
-                    .font(.title3)
-                    .bold()
-                    .foregroundColor(.adaptiveText(scheme))
-
-                if manager.isLoading {
-                    ProgressView()
-                        .tint(.adaptiveText(scheme))
-                        .frame(maxWidth: .infinity)
-                } else if let prayer = manager.todayPrayer {
-                    VStack(spacing: 14) {
-                        prayerRow(icon: "sunrise", name: "Fajr", time: prayer.fajr)
-                        prayerRow(icon: "sun.max.fill", name: "Dhuhr", time: prayer.dhuhr)
-                        prayerRow(icon: "sun.max", name: "Asr", time: prayer.asr)
-                        prayerRow(icon: "sunset", name: "Maghrib", time: prayer.maghrib)
-                        prayerRow(icon: "moon.stars", name: "Isha", time: prayer.isha)
-                    }
-                    .padding(.vertical, 18)
-                    .background(
-                        Color.primary.opacity(scheme == .light ? 0.06 : 0.15)
+                Text(remainingTime)
+                    .font(.system(size: 48, weight: .bold))
+                    .foregroundColor(.adaptiveAccent(scheme))
+                    .shadow(
+                        color: .accentShadow(scheme),
+                        radius: 12,
+                        y: 6
                     )
-                    .clipShape(RoundedRectangle(cornerRadius: 28))
-                } else if let error = manager.errorMessage {
-                    Text(error)
-                        .foregroundColor(.red)
-                        .padding()
-                } else {
-                    Text("Prayer times will load soon, inshaAllah.")
-                        .foregroundColor(.secondaryText(scheme))
-                        .italic()
-                        .padding()
-                }
+
+                Text("at \(nextPrayerTime)")
+                    .foregroundColor(.secondaryText(scheme))
+                    .padding(.top, 6)
             }
-            .padding(.horizontal)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 36)
+            .background(
+                ZStack {
+                    RoundedRectangle(cornerRadius: 28)
+                        .fill(Color.primary.opacity(scheme == .light ? 0.06 : 0.12))
+
+                    RoundedRectangle(cornerRadius: 28)
+                        .stroke(
+                            LinearGradient(
+                                colors: [
+                                    Color.white.opacity(scheme == .light ? 0.6 : 0.15),
+                                    Color.clear
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.2
+                        )
+                }
+            )
+            .shadow(
+                color: Color.black.opacity(scheme == .light ? 0.08 : 0.4),
+                radius: scheme == .light ? 18 : 30,
+                y: scheme == .light ? 8 : 16
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 28))
         }
-    
+        .padding(.horizontal)
+    }
+
+    private var todaysPrayerSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Today's Prayers")
+                .font(.title3)
+                .bold()
+                .foregroundColor(.adaptiveText(scheme))
+
+            if manager.isLoading {
+                ProgressView()
+                    .tint(.adaptiveText(scheme))
+                    .frame(maxWidth: .infinity)
+            } else if let prayer = manager.todayPrayer {
+                VStack(spacing: 14) {
+                    prayerRow(icon: "sunrise", name: "Fajr", time: prayer.fajr)
+                    prayerRow(icon: "sun.max.fill", name: "Dhuhr", time: prayer.dhuhr)
+                    prayerRow(icon: "sun.max", name: "Asr", time: prayer.asr)
+                    prayerRow(icon: "sunset", name: "Maghrib", time: prayer.maghrib)
+                    prayerRow(icon: "moon.stars", name: "Isha", time: prayer.isha)
+                }
+                .padding(.vertical, 18)
+                .background(
+                    Color.primary.opacity(scheme == .light ? 0.06 : 0.15)
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 28))
+            } else if let error = manager.errorMessage {
+                Text(error)
+                    .foregroundColor(.red)
+                    .padding()
+            } else {
+                Text("Prayer times will load soon, inshaAllah.")
+                    .foregroundColor(.secondaryText(scheme))
+                    .italic()
+                    .padding()
+            }
+        }
+        .padding(.horizontal)
+    }
+
     private func prayerRow(icon: String, name: String, time: String) -> some View {
         HStack {
             HStack(spacing: 12) {
                 Image(systemName: icon)
-                    .foregroundColor(.prayerAccent)  // Жёлтый акцент в обеих темах
+                    .foregroundColor(.prayerAccent)
                     .font(.system(size: 20))
 
                 Text(name)
-                    .foregroundColor(scheme == .light ? .black : .white)
+                    .foregroundColor(.adaptiveText(scheme))
                     .fontWeight(.medium)
             }
 
             Spacer()
 
             Text(time)
-                .foregroundColor(scheme == .light ? .black.opacity(0.7) : .white.opacity(0.8))
+                .foregroundColor(.secondaryText(scheme))
                 .fontWeight(.medium)
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 14)
         .background(
             RoundedRectangle(cornerRadius: 28)
-                .fill(
-                    scheme == .light
-                    ? Color(red: 245/255, green: 249/255, blue: 246/255)  // Очень мягкий светло-зелёный (как утренняя роса)
-                    : Color.black.opacity(0.25)
-                )
+                .fill(Color.cardBackground(scheme))
                 .overlay(
                     RoundedRectangle(cornerRadius: 28)
-                        .stroke(
-                            scheme == .light
-                            ? Color(red: 200/255, green: 230/255, blue: 201/255).opacity(0.4)
-                            : Color.white.opacity(0.1),
-                            lineWidth: 1
-                        )
+                        .stroke(Color.cardBorder(scheme), lineWidth: 1)
                 )
         )
         .padding(.horizontal, 6)
     }
-    
+
     // MARK: - Logic
-    
+
     private func updateNextPrayer(prayer: PrayerDay) {
         let times: [(String, String)] = [
             ("Fajr", prayer.fajr),
@@ -289,21 +261,21 @@ struct HomeView: View {
             ("Maghrib", prayer.maghrib),
             ("Isha", prayer.isha)
         ]
-        
+
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         let now = Date()
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: now)
-        
+
         var nextDate = Date.distantFuture
         var nextName = "Fajr"
         var nextTimeStr = prayer.fajr
-        
+
         for (name, timeStr) in times {
             let trimmed = timeStr.trimmingCharacters(in: .whitespaces)
             guard let prayerTime = formatter.date(from: trimmed) else { continue }
-            
+
             let comps = calendar.dateComponents([.hour, .minute], from: prayerTime)
             if let hour = comps.hour, let minute = comps.minute,
                let fullDate = calendar.date(bySettingHour: hour, minute: minute, second: 0, of: today) {
@@ -314,8 +286,8 @@ struct HomeView: View {
                 }
             }
         }
-        
-        // Если все намазы прошли — Фаджр завтра
+
+        // If all prayers have passed — show Fajr tomorrow
         if nextDate == Date.distantFuture {
             nextName = "Fajr"
             nextTimeStr = prayer.fajr
@@ -327,12 +299,12 @@ struct HomeView: View {
                 }
             }
         }
-        
+
         let components = calendar.dateComponents([.hour, .minute, .second], from: now, to: nextDate)
         let hours = components.hour ?? 0
         let minutes = components.minute ?? 0
         let seconds = components.second ?? 0
-        
+
         if hours > 0 {
             remainingTime = "\(hours)h \(minutes)m \(seconds)s"
         } else if minutes > 0 {
@@ -340,7 +312,7 @@ struct HomeView: View {
         } else {
             remainingTime = "\(seconds)s"
         }
-        
+
         nextPrayerName = nextName
         nextPrayerTime = nextTimeStr
     }
@@ -359,4 +331,3 @@ struct HomeView_Previews: PreviewProvider {
         }
     }
 }
-

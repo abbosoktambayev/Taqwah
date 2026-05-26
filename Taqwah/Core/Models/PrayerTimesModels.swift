@@ -1,69 +1,57 @@
 import Foundation
 
-// MARK: - Root API Response
-import Foundation
+// MARK: - Aladhan Calendar API Response
 
-// MARK: - Root API Response
-struct PrayerTimesResponse: Decodable {
-    let success: Bool
-    let result: [PrayerDay]
+struct AladhanCalendarResponse: Decodable {
+    let code: Int
+    let status: String
+    let data: [AladhanDayData]
 
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+    func toPrayerDays() -> [PrayerDay] {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd-MM-yyyy"
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
 
-        success = try container.decode(Bool.self, forKey: .success)
+        return data.compactMap { dayData in
+            guard let date = dateFormatter.date(from: dayData.date.gregorian.date) else { return nil }
 
-        // 🔹 Кастомный декодер для даты
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd-MM-yyyy"
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-
-        let decoderWithDate = JSONDecoder()
-        decoderWithDate.dateDecodingStrategy = .formatted(formatter)
-
-        let rawResult = try container.decode([RawPrayerDay].self, forKey: .result)
-
-        result = rawResult.compactMap {
-            guard let date = formatter.date(from: $0.date) else { return nil }
             return PrayerDay(
                 date: date,
-                fajr: $0.fajr.trimmingCharacters(in: .whitespaces),
-                sunrise: $0.sunrise.trimmingCharacters(in: .whitespaces),
-                dhuhr: $0.dhuhr.trimmingCharacters(in: .whitespaces),
-                asr: $0.asr.trimmingCharacters(in: .whitespaces),
-                maghrib: $0.maghrib.trimmingCharacters(in: .whitespaces),
-                isha: $0.isha.trimmingCharacters(in: .whitespaces)
+                fajr: dayData.timings.Fajr.cleanTime(),
+                sunrise: dayData.timings.Sunrise.cleanTime(),
+                dhuhr: dayData.timings.Dhuhr.cleanTime(),
+                asr: dayData.timings.Asr.cleanTime(),
+                maghrib: dayData.timings.Maghrib.cleanTime(),
+                isha: dayData.timings.Isha.cleanTime()
             )
         }
     }
-
-    enum CodingKeys: String, CodingKey {
-        case success
-        case result
-    }
 }
 
-// MARK: - Raw model (date as String)
-private struct RawPrayerDay: Decodable {
-    let date: String
-    let fajr: String
-    let sunrise: String
-    let dhuhr: String
-    let asr: String
-    let maghrib: String
-    let isha: String
-
-    enum CodingKeys: String, CodingKey {
-        case date
-        case fajr = "Fajr"
-        case sunrise = "Sunrise"
-        case dhuhr = "Dhuhr"
-        case asr = "Asr"
-        case maghrib = "Maghrib"
-        case isha = "Isha"
-    }
+struct AladhanDayData: Decodable {
+    let timings: AladhanTimings
+    let date: AladhanDate
 }
+
+struct AladhanTimings: Decodable {
+    let Fajr: String
+    let Sunrise: String
+    let Dhuhr: String
+    let Asr: String
+    let Maghrib: String
+    let Isha: String
+}
+
+struct AladhanDate: Decodable {
+    let gregorian: AladhanGregorianDate
+}
+
+struct AladhanGregorianDate: Decodable {
+    let date: String  // "27-05-2026"
+}
+
 // MARK: - One Day Prayer Times
+
 struct PrayerDay: Identifiable {
     let id = UUID()
 
@@ -74,4 +62,16 @@ struct PrayerDay: Identifiable {
     let asr: String
     let maghrib: String
     let isha: String
+}
+
+// MARK: - String Cleanup
+
+extension String {
+    /// Remove timezone suffix like " (+05)" from Aladhan time strings
+    func cleanTime() -> String {
+        if let parenIndex = self.firstIndex(of: "(") {
+            return String(self[self.startIndex..<parenIndex]).trimmingCharacters(in: .whitespaces)
+        }
+        return self.trimmingCharacters(in: .whitespaces)
+    }
 }

@@ -3,18 +3,17 @@ import SwiftUI
 struct PrayersView: View {
 
     // MARK: - State
-    @State private var streak: Int = 7
-    @State private var completed: Set<String> = ["Fajr", "Dhuhr", "Asr"]
+    @StateObject private var tracker = PrayerTrackerManager.shared
+    @StateObject private var prayerManager = PrayerTimesManager.shared
     @Namespace private var animation
     @Environment(\.colorScheme) private var scheme
 
-
-    let prayers: [(name: String, time: String, icon: String)] = [
-        ("Fajr", "05:20", "sun.and.horizon.fill"),
-        ("Dhuhr", "12:30", "sun.max.fill"),
-        ("Asr", "15:45", "sun.max.trianglebadge.exclamationmark.fill"),
-        ("Maghrib", "18:10", "sunset.fill"),
-        ("Isha", "19:40", "moon.stars.fill")
+    private let prayerIcons: [String: String] = [
+        "Fajr": "sun.and.horizon.fill",
+        "Dhuhr": "sun.max.fill",
+        "Asr": "sun.min.fill",
+        "Maghrib": "sunset.fill",
+        "Isha": "moon.stars.fill"
     ]
 
     var body: some View {
@@ -25,14 +24,17 @@ struct PrayersView: View {
 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 24) {
-
                         headerSection
                         progressCard
 
                         VStack(spacing: 16) {
-                            ForEach(prayers, id: \.name) { prayer in
-                                prayerRow(prayer)
-                                    .animation(.spring(response: 0.3), value: completed)
+                            ForEach(PrayerTrackerManager.allPrayers, id: \.self) { prayerName in
+                                prayerRow(
+                                    name: prayerName,
+                                    time: timeForPrayer(prayerName),
+                                    icon: prayerIcons[prayerName] ?? "circle"
+                                )
+                                .animation(.spring(response: 0.3), value: tracker.todayCompleted)
                             }
                         }
                     }
@@ -44,14 +46,27 @@ struct PrayersView: View {
         }
     }
 
+    // MARK: - Time from API
+
+    private func timeForPrayer(_ name: String) -> String {
+        guard let prayer = prayerManager.todayPrayer else { return "--:--" }
+        switch name {
+        case "Fajr": return prayer.fajr
+        case "Dhuhr": return prayer.dhuhr
+        case "Asr": return prayer.asr
+        case "Maghrib": return prayer.maghrib
+        case "Isha": return prayer.isha
+        default: return "--:--"
+        }
+    }
+
     // MARK: - Header
+
     private var headerSection: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                
-
                 Text("Track your daily prayers")
-                    .foregroundColor(.white.opacity(0.6))
+                    .foregroundColor(.secondaryText(scheme))
             }
 
             Spacer()
@@ -60,24 +75,23 @@ struct PrayersView: View {
                 Image(systemName: "flame.fill")
                     .foregroundColor(.orange)
 
-                Text("\(streak) days")
+                Text("\(tracker.streak) days")
                     .bold()
                     .foregroundColor(.orange)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 8)
-            .background(Color.white.opacity(0.08))
+            .background(Color.streakBackground(scheme))
             .clipShape(Capsule())
         }
-        .foregroundColor(.white)
+        .foregroundColor(.adaptiveText(scheme))
         .padding(.horizontal)
     }
 
     // MARK: - Progress Card
-    private var progressCard: some View {
-        let progressValue = CGFloat(completed.count) / 5
 
-        return VStack(alignment: .leading, spacing: 16) {
+    private var progressCard: some View {
+        VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Text("Today's Progress")
                     .font(.headline)
@@ -85,7 +99,7 @@ struct PrayersView: View {
 
                 Spacer()
 
-                Text("\(completed.count)/5")
+                Text("\(tracker.completedCount)/5")
                     .bold()
                     .foregroundColor(.green)
             }
@@ -93,33 +107,37 @@ struct PrayersView: View {
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     Capsule()
-                        .fill(Color.white.opacity(0.12))
+                        .fill(Color.progressTrack(scheme))
 
                     Capsule()
                         .fill(Color.green)
-                        .frame(width: geo.size.width * progressValue)
-                        .animation(.easeInOut(duration: 0.35), value: completed.count)
+                        .frame(width: geo.size.width * tracker.progress)
+                        .animation(.easeInOut(duration: 0.35), value: tracker.completedCount)
                 }
             }
             .frame(height: 10)
         }
-        .foregroundColor(.white)
+        .foregroundColor(.adaptiveText(scheme))
         .padding()
-        .background(Color.white.opacity(0.07))
+        .background(Color.cardBackground(scheme))
         .clipShape(RoundedRectangle(cornerRadius: 25))
+        .overlay(
+            RoundedRectangle(cornerRadius: 25)
+                .stroke(Color.cardBorder(scheme), lineWidth: 1)
+        )
         .padding(.horizontal)
     }
 
     // MARK: - Prayer Row
-    private func prayerRow(_ prayer: (name: String, time: String, icon: String)) -> some View {
-        let isDone = completed.contains(prayer.name)
+
+    private func prayerRow(name: String, time: String, icon: String) -> some View {
+        let isDone = tracker.isCompleted(name)
 
         return Button {
             lightHaptic()
-            togglePrayer(prayer.name)
+            tracker.togglePrayer(name)
         } label: {
             HStack(spacing: 16) {
-
                 ZStack {
                     if isDone {
                         Circle()
@@ -129,29 +147,33 @@ struct PrayersView: View {
 
                         Image(systemName: "checkmark")
                             .font(.headline)
-                            .foregroundColor(.black)
-                            .matchedGeometryEffect(id: prayer.name, in: animation)
+                            .foregroundColor(.white)
+                            .matchedGeometryEffect(id: name, in: animation)
                     } else {
                         Circle()
-                            .strokeBorder(Color.white.opacity(0.3), lineWidth: 2)
+                            .strokeBorder(Color.uncheckedBorder(scheme), lineWidth: 2)
                             .frame(width: 48, height: 48)
                     }
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(prayer.name)
+                    Text(name)
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .foregroundColor(.adaptiveText(scheme))
 
-                    Text(prayer.time)
-                        .foregroundColor(.white.opacity(0.6))
+                    Text(time)
+                        .foregroundColor(.secondaryText(scheme))
                 }
 
                 Spacer()
             }
             .padding()
-            .background(Color.white.opacity(0.07))
+            .background(Color.cardBackground(scheme))
             .clipShape(RoundedRectangle(cornerRadius: 22))
+            .overlay(
+                RoundedRectangle(cornerRadius: 22)
+                    .stroke(Color.cardBorder(scheme), lineWidth: 1)
+            )
             .scaleEffect(isDone ? 0.97 : 1.0)
             .animation(.spring(response: 0.25), value: isDone)
         }
@@ -159,21 +181,19 @@ struct PrayersView: View {
         .padding(.horizontal)
     }
 
-    // MARK: - Logic
-    private func togglePrayer(_ name: String) {
-        if completed.contains(name) {
-            completed.remove(name)
-        } else {
-            completed.insert(name)
-        }
-    }
+    // MARK: - Haptic
 
     private func lightHaptic() {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 }
 
-#Preview {
+#Preview("Dark") {
     PrayersView()
         .preferredColorScheme(.dark)
+}
+
+#Preview("Light") {
+    PrayersView()
+        .preferredColorScheme(.light)
 }

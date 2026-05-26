@@ -1,17 +1,16 @@
 import SwiftUI
 
 struct AppBackground: View {
-    @StateObject private var settings = SettingsManager.shared
+    @Environment(\.colorScheme) private var scheme
 
     var body: some View {
         Group {
-            if settings.colorScheme == .light {
-                // Светлая тема (чисто, контрастно)
+            if scheme == .light {
                 LinearGradient(
                     colors: [
-                        Color(red: 226/255, green: 240/255, blue: 230/255), // чуть темнее сверху
+                        Color(red: 226/255, green: 240/255, blue: 230/255),
                         Color(red: 240/255, green: 248/255, blue: 242/255),
-                        Color(red: 248/255, green: 252/255, blue: 249/255)  // почти белый низ
+                        Color(red: 248/255, green: 252/255, blue: 249/255)
                     ],
                     startPoint: .top,
                     endPoint: .bottom
