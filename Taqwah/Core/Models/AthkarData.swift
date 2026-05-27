@@ -6,6 +6,10 @@ enum AthkarCategory: String, CaseIterable, Identifiable {
     case morning = "Morning"
     case evening = "Evening"
     case afterPrayer = "After Prayer"
+    case sleep = "Before Sleep"
+    case waking = "Upon Waking"
+    case food = "Food & Drink"
+    case travel = "Travel"
 
     var id: String { rawValue }
 
@@ -14,6 +18,10 @@ enum AthkarCategory: String, CaseIterable, Identifiable {
         case .morning: return "أذكار الصباح"
         case .evening: return "أذكار المساء"
         case .afterPrayer: return "أذكار بعد الصلاة"
+        case .sleep: return "أذكار النوم"
+        case .waking: return "أذكار الاستيقاظ"
+        case .food: return "أذكار الطعام"
+        case .travel: return "أذكار السفر"
         }
     }
 
@@ -22,6 +30,10 @@ enum AthkarCategory: String, CaseIterable, Identifiable {
         case .morning: return "sun.max.fill"
         case .evening: return "moon.fill"
         case .afterPrayer: return "clock.fill"
+        case .sleep: return "bed.double.fill"
+        case .waking: return "alarm.fill"
+        case .food: return "fork.knife"
+        case .travel: return "airplane"
         }
     }
 
@@ -41,6 +53,26 @@ enum AthkarCategory: String, CaseIterable, Identifiable {
             return [
                 Color(red: 0.11, green: 0.23, blue: 0.22),
                 Color(red: 0.09, green: 0.25, blue: 0.31)
+            ]
+        case .sleep:
+            return [
+                Color(red: 0.16, green: 0.18, blue: 0.45),
+                Color(red: 0.08, green: 0.10, blue: 0.28)
+            ]
+        case .waking:
+            return [
+                Color(red: 0.95, green: 0.70, blue: 0.25),
+                Color(red: 0.90, green: 0.50, blue: 0.30)
+            ]
+        case .food:
+            return [
+                Color(red: 0.20, green: 0.55, blue: 0.45),
+                Color(red: 0.12, green: 0.40, blue: 0.35)
+            ]
+        case .travel:
+            return [
+                Color(red: 0.20, green: 0.50, blue: 0.75),
+                Color(red: 0.15, green: 0.35, blue: 0.60)
             ]
         }
     }
@@ -83,6 +115,10 @@ enum AthkarDataSource {
         case .morning: return morningAthkar
         case .evening: return eveningAthkar
         case .afterPrayer: return afterPrayerAthkar
+        case .sleep: return sleepAthkar
+        case .waking: return wakingAthkar
+        case .food: return foodAthkar
+        case .travel: return travelAthkar
         }
     }
 
@@ -230,5 +266,103 @@ enum AthkarDataSource {
         Dhikr(title: "Three Quls", arabic: "قُلْ هُوَ اللَّهُ أَحَدٌ... قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ... قُلْ أَعُوذُ بِرَبِّ النَّاسِ...", transliteration: "Qul Huwal-lahu Ahad... Qul a'udhu bi-Rabbil-falaq... Qul a'udhu bi-Rabbin-nas...", translation: "Recite Surah Al-Ikhlas, Al-Falaq, and An-Nas after every prayer.", repetitions: 1, source: "Sunan Abu Dawud 1523", virtue: nil, category: .afterPrayer),
         Dhikr(title: "Help in Worship", arabic: "اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ", transliteration: "Allahumma a'inni 'ala dhikrika wa shukrika wa husni 'ibadatik.", translation: "O Allah, help me in remembering You, being grateful to You, and worshipping You in the best of manners.", repetitions: 1, source: "Sunan Abu Dawud 1522", virtue: nil, category: .afterPrayer),
         Dhikr(title: "Seeking Refuge", arabic: "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ عَذَابِ الْقَبْرِ، وَأَعُوذُ بِكَ مِنْ فِتْنَةِ الْمَسِيحِ الدَّجَّالِ، وَأَعُوذُ بِكَ مِنْ فِتْنَةِ الْمَحْيَا وَفِتْنَةِ الْمَمَاتِ", transliteration: "Allahumma inni a'udhu bika min 'adhabil-qabr, wa min fitnatil-masihid-dajjal...", translation: "O Allah, I seek refuge in You from the punishment of the grave, the trial of the False Messiah, and the trials of life and death.", repetitions: 1, source: "Sahih al-Bukhari 832", virtue: nil, category: .afterPrayer),
+    ]
+
+    // MARK: - Before Sleep Athkar
+
+    static let sleepAthkar: [Dhikr] = [
+        Dhikr(title: "In Your Name",
+              arabic: "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
+              transliteration: "Bismika Allahumma amutu wa ahya.",
+              translation: "In Your name, O Allah, I die and I live.",
+              repetitions: 1, source: "Sahih al-Bukhari 6324", virtue: nil, category: .sleep),
+        Dhikr(title: "Tasbih of Fatimah",
+              arabic: "سُبْحَانَ اللَّهِ (٣٣) الْحَمْدُ لِلَّهِ (٣٣) اللَّهُ أَكْبَرُ (٣٤)",
+              transliteration: "SubhanAllah (33x), Alhamdulillah (33x), Allahu Akbar (34x).",
+              translation: "Glory be to Allah (33), all praise to Allah (33), Allah is the Greatest (34).",
+              repetitions: 1, source: "Sahih al-Bukhari 5362",
+              virtue: "Better for you than a servant.", category: .sleep),
+        Dhikr(title: "Entrusting the Soul",
+              arabic: "اللَّهُمَّ أَسْلَمْتُ نَفْسِي إِلَيْكَ، وَفَوَّضْتُ أَمْرِي إِلَيْكَ، وَأَلْجَأْتُ ظَهْرِي إِلَيْكَ، رَغْبَةً وَرَهْبَةً إِلَيْكَ، لَا مَلْجَأَ وَلَا مَنْجَا مِنْكَ إِلَّا إِلَيْكَ، آمَنْتُ بِكِتَابِكَ الَّذِي أَنْزَلْتَ، وَبِنَبِيِّكَ الَّذِي أَرْسَلْتَ",
+              transliteration: "Allahumma aslamtu nafsi ilayk, wa fawwadtu amri ilayk...",
+              translation: "O Allah, I submit myself to You, entrust my affairs to You, and rely upon You, in hope and fear of You. There is no refuge or escape from You except to You. I believe in Your Book which You revealed and Your Prophet whom You sent.",
+              repetitions: 1, source: "Sahih al-Bukhari 247",
+              virtue: "If you die that night, you die upon the fitrah.", category: .sleep),
+        Dhikr(title: "Ayatul Kursi",
+              arabic: "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ...",
+              transliteration: "Allahu la ilaha illa Huwal-Hayyul-Qayyum...",
+              translation: "Recite Ayatul Kursi — a protector will remain with you and no devil will come near until morning.",
+              repetitions: 1, source: "Sahih al-Bukhari 2311", virtue: nil, category: .sleep),
+        Dhikr(title: "The Three Quls",
+              arabic: "قُلْ هُوَ اللَّهُ أَحَدٌ … قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ … قُلْ أَعُوذُ بِرَبِّ النَّاسِ",
+              transliteration: "Qul Huwallahu Ahad … Qul a'udhu bi-Rabbil-falaq … Qul a'udhu bi-Rabbin-nas.",
+              translation: "Recite Al-Ikhlas, Al-Falaq and An-Nas, blow into the palms and wipe over the body.",
+              repetitions: 3, source: "Sahih al-Bukhari 5017", virtue: nil, category: .sleep),
+    ]
+
+    // MARK: - Upon Waking Athkar
+
+    static let wakingAthkar: [Dhikr] = [
+        Dhikr(title: "Praise on Waking",
+              arabic: "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
+              transliteration: "Alhamdu lillahil-ladhi ahyana ba'da ma amatana wa ilayhin-nushur.",
+              translation: "All praise is for Allah who gave us life after death (sleep), and to Him is the resurrection.",
+              repetitions: 1, source: "Sahih al-Bukhari 6312", virtue: nil, category: .waking),
+        Dhikr(title: "No god but Allah",
+              arabic: "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ، سُبْحَانَ اللَّهِ، وَالْحَمْدُ لِلَّهِ، وَلَا إِلَهَ إِلَّا اللَّهُ، وَاللَّهُ أَكْبَرُ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+              transliteration: "La ilaha illallahu wahdahu la sharika lah... wa la hawla wa la quwwata illa billah.",
+              translation: "None has the right to be worshipped but Allah alone... There is no might nor power except with Allah. (Whoever says this and then supplicates, his prayer is answered.)",
+              repetitions: 1, source: "Sahih al-Bukhari 1154", virtue: nil, category: .waking),
+        Dhikr(title: "Restored Health",
+              arabic: "الْحَمْدُ لِلَّهِ الَّذِي عَافَانِي فِي جَسَدِي، وَرَدَّ عَلَيَّ رُوحِي، وَأَذِنَ لِي بِذِكْرِهِ",
+              transliteration: "Alhamdu lillahil-ladhi 'afani fi jasadi, wa radda 'alayya ruhi, wa adhina li bi-dhikrih.",
+              translation: "Praise is to Allah who restored my health, returned my soul, and permitted me to remember Him.",
+              repetitions: 1, source: "Sunan at-Tirmidhi 3401", virtue: nil, category: .waking),
+    ]
+
+    // MARK: - Food & Drink Athkar
+
+    static let foodAthkar: [Dhikr] = [
+        Dhikr(title: "Before Eating",
+              arabic: "بِسْمِ اللَّهِ",
+              transliteration: "Bismillah.",
+              translation: "In the name of Allah. (If forgotten, say: Bismillahi awwalahu wa akhirah.)",
+              repetitions: 1, source: "Sunan Abu Dawud 3767", virtue: nil, category: .food),
+        Dhikr(title: "After Eating",
+              arabic: "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنِي هَذَا وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ",
+              transliteration: "Alhamdu lillahil-ladhi at'amani hadha wa razaqanihi min ghayri hawlin minni wa la quwwah.",
+              translation: "Praise is to Allah who fed me this and provided it for me without any might or power on my part.",
+              repetitions: 1, source: "Sunan at-Tirmidhi 3458",
+              virtue: "His past sins are forgiven.", category: .food),
+        Dhikr(title: "Du'a for the Host",
+              arabic: "اللَّهُمَّ بَارِكْ لَهُمْ فِيمَا رَزَقْتَهُمْ، وَاغْفِرْ لَهُمْ وَارْحَمْهُمْ",
+              transliteration: "Allahumma barik lahum fima razaqtahum, waghfir lahum warhamhum.",
+              translation: "O Allah, bless for them what You have provided them, forgive them and have mercy on them.",
+              repetitions: 1, source: "Sahih Muslim 2042", virtue: nil, category: .food),
+    ]
+
+    // MARK: - Travel Athkar
+
+    static let travelAthkar: [Dhikr] = [
+        Dhikr(title: "Mounting the Ride",
+              arabic: "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ، وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ",
+              transliteration: "Subhanal-ladhi sakhkhara lana hadha wa ma kunna lahu muqrinin, wa inna ila Rabbina lamunqalibun.",
+              translation: "Glory to Him who has subjected this to us, and we could never have it (by our efforts). Surely, to our Lord we are returning.",
+              repetitions: 1, source: "Sahih Muslim 1342", virtue: nil, category: .travel),
+        Dhikr(title: "Travel Supplication",
+              arabic: "اللَّهُمَّ إِنَّا نَسْأَلُكَ فِي سَفَرِنَا هَذَا الْبِرَّ وَالتَّقْوَى، وَمِنَ الْعَمَلِ مَا تَرْضَى، اللَّهُمَّ هَوِّنْ عَلَيْنَا سَفَرَنَا هَذَا وَاطْوِ عَنَّا بُعْدَهُ",
+              transliteration: "Allahumma inna nas'aluka fi safarina hadhal-birra wat-taqwa...",
+              translation: "O Allah, we ask You on this journey for righteousness, piety, and deeds that please You. O Allah, make this journey easy for us and fold up its distance.",
+              repetitions: 1, source: "Sahih Muslim 1342", virtue: nil, category: .travel),
+        Dhikr(title: "Entering a Town",
+              arabic: "اللَّهُمَّ رَبَّ السَّمَاوَاتِ السَّبْعِ وَمَا أَظْلَلْنَ... أَسْأَلُكَ خَيْرَ هَذِهِ الْقَرْيَةِ وَخَيْرَ أَهْلِهَا، وَأَعُوذُ بِكَ مِنْ شَرِّهَا وَشَرِّ أَهْلِهَا",
+              transliteration: "Allahumma Rabbas-samawatis-sab'i wa ma azlalna... as'aluka khayra hadhihil-qaryah...",
+              translation: "O Allah, Lord of the seven heavens and all they overshadow... I ask You for the good of this town and its people, and seek refuge in You from its evil and the evil of its people.",
+              repetitions: 1, source: "Sunan an-Nasa'i (al-Kubra)", virtue: nil, category: .travel),
+        Dhikr(title: "Stopping at a Place",
+              arabic: "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ",
+              transliteration: "A'udhu bi-kalimatillahit-tammati min sharri ma khalaq.",
+              translation: "I seek refuge in the perfect words of Allah from the evil of what He created. (Nothing will harm him until he leaves.)",
+              repetitions: 1, source: "Sahih Muslim 2708", virtue: nil, category: .travel),
     ]
 }

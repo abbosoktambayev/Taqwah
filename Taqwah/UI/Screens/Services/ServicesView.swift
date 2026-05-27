@@ -28,6 +28,10 @@ struct ServicesView: View {
                                 serviceRow("Qibla Compass", "safari.fill", .green) {
                                     QiblaView()
                                 }
+                                dividerLine
+                                serviceRow("Tasbih", "circle.hexagongrid.fill", .green) {
+                                    TasbihView()
+                                }
                             }
                         }
 
@@ -47,6 +51,15 @@ struct ServicesView: View {
                                 serviceRow("Language", "globe", .green) {
                                     LanguageView()
                                 }
+                            }
+                        }
+
+                        // MARK: - SUPPORT
+                        sectionTitle("SUPPORT")
+
+                        glassGroup {
+                            serviceRow("Support Taqwah", "heart.fill", .pink) {
+                                DonateView()
                             }
                         }
 
@@ -87,7 +100,7 @@ struct ServicesView: View {
     // MARK: - Components (moved inside struct)
 
     private func sectionTitle(_ text: String) -> some View {
-        Text(text)
+        Text(LocalizedStringKey(text))
             .font(.caption.weight(.semibold))
             .foregroundColor(.sectionTitle(scheme))
             .padding(.horizontal)
@@ -133,7 +146,7 @@ struct ServicesView: View {
                     .font(.system(size: 20))
                     .foregroundColor(tint)
 
-                Text(title)
+                Text(LocalizedStringKey(title))
                     .font(.system(size: 17))
                     .foregroundColor(.adaptiveText(scheme))
 

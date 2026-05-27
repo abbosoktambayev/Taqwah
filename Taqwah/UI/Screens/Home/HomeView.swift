@@ -20,6 +20,7 @@ struct HomeView: View {
     // Dynamic day of week
     private var currentDayName: String {
         let formatter = DateFormatter()
+        formatter.locale = LocalizationManager.shared.locale
         formatter.dateFormat = "EEEE"
         return formatter.string(from: Date())
     }
@@ -195,11 +196,11 @@ struct HomeView: View {
                     .frame(maxWidth: .infinity)
             } else if let prayer = manager.todayPrayer {
                 VStack(spacing: 14) {
-                    prayerRow(icon: "sunrise", name: "Fajr", time: prayer.fajr)
-                    prayerRow(icon: "sun.max.fill", name: "Dhuhr", time: prayer.dhuhr)
-                    prayerRow(icon: "sun.max", name: "Asr", time: prayer.asr)
-                    prayerRow(icon: "sunset", name: "Maghrib", time: prayer.maghrib)
-                    prayerRow(icon: "moon.stars", name: "Isha", time: prayer.isha)
+                    prayerRow(icon: "sunrise", name: "Fajr", time: prayer.displayTime(for: "Fajr"))
+                    prayerRow(icon: "sun.max.fill", name: "Dhuhr", time: prayer.displayTime(for: "Dhuhr"))
+                    prayerRow(icon: "sun.max", name: "Asr", time: prayer.displayTime(for: "Asr"))
+                    prayerRow(icon: "sunset", name: "Maghrib", time: prayer.displayTime(for: "Maghrib"))
+                    prayerRow(icon: "moon.stars", name: "Isha", time: prayer.displayTime(for: "Isha"))
                 }
                 .padding(.vertical, 18)
                 .background(
@@ -254,50 +255,31 @@ struct HomeView: View {
     // MARK: - Logic
 
     private func updateNextPrayer(prayer: PrayerDay) {
-        let times: [(String, String)] = [
-            ("Fajr", prayer.fajr),
-            ("Dhuhr", prayer.dhuhr),
-            ("Asr", prayer.asr),
-            ("Maghrib", prayer.maghrib),
-            ("Isha", prayer.isha)
-        ]
-
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
         let now = Date()
         let calendar = Calendar.current
-        let today = calendar.startOfDay(for: now)
+        let events = prayer.timelineEvents()
+
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "HH:mm"
+        timeFormatter.locale = Locale(identifier: "en_US_POSIX")
 
         var nextDate = Date.distantFuture
         var nextName = "Fajr"
-        var nextTimeStr = prayer.fajr
+        var nextTimeStr = prayer.displayTime(for: "Fajr")
 
-        for (name, timeStr) in times {
-            let trimmed = timeStr.trimmingCharacters(in: .whitespaces)
-            guard let prayerTime = formatter.date(from: trimmed) else { continue }
-
-            let comps = calendar.dateComponents([.hour, .minute], from: prayerTime)
-            if let hour = comps.hour, let minute = comps.minute,
-               let fullDate = calendar.date(bySettingHour: hour, minute: minute, second: 0, of: today) {
-                if fullDate > now && fullDate < nextDate {
-                    nextDate = fullDate
-                    nextName = name
-                    nextTimeStr = trimmed
-                }
-            }
+        // Find the next upcoming prayer today.
+        for event in events where event.date > now && event.date < nextDate {
+            nextDate = event.date
+            nextName = event.name
+            nextTimeStr = timeFormatter.string(from: event.date)
         }
 
-        // If all prayers have passed — show Fajr tomorrow
-        if nextDate == Date.distantFuture {
+        // If all of today's prayers have passed — roll over to tomorrow's Fajr.
+        if nextDate == Date.distantFuture, let fajr = prayer.event(for: "Fajr"),
+           let tomorrow = calendar.date(byAdding: .day, value: 1, to: fajr.date) {
+            nextDate = tomorrow
             nextName = "Fajr"
-            nextTimeStr = prayer.fajr
-            if let fajrTime = formatter.date(from: prayer.fajr.trimmingCharacters(in: .whitespaces)),
-               let tomorrow = calendar.date(byAdding: .day, value: 1, to: today) {
-                let fajrComps = calendar.dateComponents([.hour, .minute], from: fajrTime)
-                if let hour = fajrComps.hour, let minute = fajrComps.minute {
-                    nextDate = calendar.date(bySettingHour: hour, minute: minute, second: 0, of: tomorrow) ?? Date.distantFuture
-                }
-            }
+            nextTimeStr = timeFormatter.string(from: fajr.date)
         }
 
         let components = calendar.dateComponents([.hour, .minute, .second], from: now, to: nextDate)

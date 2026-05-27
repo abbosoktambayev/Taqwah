@@ -66,7 +66,7 @@ struct AthkarView: View {
                     .foregroundColor(.white)
             }
 
-            Text(category.rawValue)
+            Text(LocalizedStringKey(category.rawValue))
                 .font(.title3)
                 .fontWeight(.semibold)
                 .foregroundColor(.white)

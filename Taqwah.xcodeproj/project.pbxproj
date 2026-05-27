@@ -6,14 +6,62 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		F1F1F1F1F1F1F1F1F1F1000D /* TaqwahWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = F1F1F1F1F1F1F1F1F1F10001 /* TaqwahWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F1F1F1F1F1F1F1F1F1F1000B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 026F47B62ECEFBE90091E7F2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F1F1F1F1F1F1F1F1F1F10003;
+			remoteInfo = TaqwahWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F1F1F1F1F1F1F1F1F1F1000C /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				F1F1F1F1F1F1F1F1F1F1000D /* TaqwahWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		026F47BE2ECEFBE90091E7F2 /* Taqwah.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Taqwah.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		02F2E7462FC6928300A72FB8 /* Taqwah.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Taqwah.storekit; sourceTree = "<group>"; };
+		F1F1F1F1F1F1F1F1F1F10001 /* TaqwahWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TaqwahWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		F1F1F1F1F1F1F1F1F1F1000E /* Exceptions for "TaqwahWidget" folder in "TaqwahWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = F1F1F1F1F1F1F1F1F1F10003 /* TaqwahWidgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		026F47C02ECEFBE90091E7F2 /* Taqwah */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Taqwah;
+			sourceTree = "<group>";
+		};
+		F1F1F1F1F1F1F1F1F1F10002 /* TaqwahWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F1F1F1F1F1F1F1F1F1F1000E /* Exceptions for "TaqwahWidget" folder in "TaqwahWidgetExtension" target */,
+			);
+			path = TaqwahWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -26,13 +74,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F1F1F1F1F1F1F1F1F1F10005 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		026F47B52ECEFBE90091E7F2 = {
 			isa = PBXGroup;
 			children = (
+				02F2E7462FC6928300A72FB8 /* Taqwah.storekit */,
 				026F47C02ECEFBE90091E7F2 /* Taqwah */,
+				F1F1F1F1F1F1F1F1F1F10002 /* TaqwahWidget */,
 				026F47BF2ECEFBE90091E7F2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +98,7 @@
 			isa = PBXGroup;
 			children = (
 				026F47BE2ECEFBE90091E7F2 /* Taqwah.app */,
+				F1F1F1F1F1F1F1F1F1F10001 /* TaqwahWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -55,10 +113,12 @@
 				026F47BA2ECEFBE90091E7F2 /* Sources */,
 				026F47BB2ECEFBE90091E7F2 /* Frameworks */,
 				026F47BC2ECEFBE90091E7F2 /* Resources */,
+				F1F1F1F1F1F1F1F1F1F1000C /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				F1F1F1F1F1F1F1F1F1F1000A /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				026F47C02ECEFBE90091E7F2 /* Taqwah */,
@@ -69,6 +129,28 @@
 			productName = Taqwah;
 			productReference = 026F47BE2ECEFBE90091E7F2 /* Taqwah.app */;
 			productType = "com.apple.product-type.application";
+		};
+		F1F1F1F1F1F1F1F1F1F10003 /* TaqwahWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F1F1F1F1F1F1F1F1F1F10007 /* Build configuration list for PBXNativeTarget "TaqwahWidgetExtension" */;
+			buildPhases = (
+				F1F1F1F1F1F1F1F1F1F10004 /* Sources */,
+				F1F1F1F1F1F1F1F1F1F10005 /* Frameworks */,
+				F1F1F1F1F1F1F1F1F1F10006 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				F1F1F1F1F1F1F1F1F1F10002 /* TaqwahWidget */,
+			);
+			name = TaqwahWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = TaqwahWidgetExtension;
+			productReference = F1F1F1F1F1F1F1F1F1F10001 /* TaqwahWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -83,6 +165,9 @@
 					026F47BD2ECEFBE90091E7F2 = {
 						CreatedOnToolsVersion = 26.0;
 					};
+					F1F1F1F1F1F1F1F1F1F10003 = {
+						CreatedOnToolsVersion = 26.0;
+					};
 				};
 			};
 			buildConfigurationList = 026F47B92ECEFBE90091E7F2 /* Build configuration list for PBXProject "Taqwah" */;
@@ -91,6 +176,9 @@
 			knownRegions = (
 				en,
 				Base,
+				ru,
+				kk,
+				uz,
 			);
 			mainGroup = 026F47B52ECEFBE90091E7F2;
 			minimizedProjectReferenceProxies = 1;
@@ -100,12 +188,20 @@
 			projectRoot = "";
 			targets = (
 				026F47BD2ECEFBE90091E7F2 /* Taqwah */,
+				F1F1F1F1F1F1F1F1F1F10003 /* TaqwahWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		026F47BC2ECEFBE90091E7F2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F1F1F1F1F1F1F1F1F1F10006 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +218,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F1F1F1F1F1F1F1F1F1F10004 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F1F1F1F1F1F1F1F1F1F1000A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F1F1F1F1F1F1F1F1F1F10003 /* TaqwahWidgetExtension */;
+			targetProxy = F1F1F1F1F1F1F1F1F1F1000B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		026F47C72ECEFBEA0091E7F2 /* Debug */ = {
@@ -253,11 +364,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Taqwah/Taqwah.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8T7DV459A3;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Taqwah-Info.plist";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Taqwah needs your location to show accurate prayer times and Qibla direction for your city.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -286,11 +399,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Taqwah/Taqwah.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8T7DV459A3;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Taqwah-Info.plist";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Taqwah needs your location to show accurate prayer times and Qibla direction for your city.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -314,6 +429,62 @@
 			};
 			name = Release;
 		};
+		F1F1F1F1F1F1F1F1F1F10008 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_ENTITLEMENTS = TaqwahWidget/TaqwahWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8T7DV459A3;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TaqwahWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.abbos.Taqwah.TaqwahWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F1F1F1F1F1F1F1F1F1F10009 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_ENTITLEMENTS = TaqwahWidget/TaqwahWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8T7DV459A3;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TaqwahWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.abbos.Taqwah.TaqwahWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -331,6 +502,15 @@
 			buildConfigurations = (
 				026F47CA2ECEFBEA0091E7F2 /* Debug */,
 				026F47CB2ECEFBEA0091E7F2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F1F1F1F1F1F1F1F1F1F10007 /* Build configuration list for PBXNativeTarget "TaqwahWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F1F1F1F1F1F1F1F1F1F10008 /* Debug */,
+				F1F1F1F1F1F1F1F1F1F10009 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

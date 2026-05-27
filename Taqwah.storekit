@@ -1,0 +1,68 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "TAQWAHTIPS",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "1.99",
+      "familyShareable" : false,
+      "internalID" : "1000000001",
+      "localizations" : [
+        {
+          "description" : "A small thank-you to support development",
+          "displayName" : "Small Tip",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.abbos.Taqwah.tip.small",
+      "referenceName" : "Small Tip",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "1000000002",
+      "localizations" : [
+        {
+          "description" : "A generous tip — JazakAllahu Khayran",
+          "displayName" : "Generous Tip",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.abbos.Taqwah.tip.medium",
+      "referenceName" : "Generous Tip",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "9.99",
+      "familyShareable" : false,
+      "internalID" : "1000000003",
+      "localizations" : [
+        {
+          "description" : "A big-hearted gift to support the ummah",
+          "displayName" : "Big-Hearted Gift",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.abbos.Taqwah.tip.large",
+      "referenceName" : "Big-Hearted Gift",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

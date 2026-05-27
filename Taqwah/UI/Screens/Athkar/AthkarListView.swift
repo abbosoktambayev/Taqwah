@@ -3,7 +3,11 @@ import SwiftUI
 struct AthkarListView: View {
     let category: AthkarCategory
     @Environment(\.colorScheme) private var scheme
-    @State private var completedIndices: Set<Int> = []
+    @StateObject private var progress = AthkarProgressManager.shared
+
+    private var completedIndices: Set<Int> {
+        progress.completed(for: category)
+    }
 
     private var athkarList: [Dhikr] {
         category.athkar
@@ -14,7 +18,7 @@ struct AthkarListView: View {
             AppBackground()
 
             ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 20) {
+                LazyVStack(alignment: .leading, spacing: 20) {
 
                     // MARK: - Category Header
                     headerSection
@@ -24,7 +28,7 @@ struct AthkarListView: View {
                         NavigationLink(destination: AthkarDetailView(
                             athkarList: athkarList,
                             startIndex: index,
-                            completedIndices: $completedIndices
+                            completedIndices: progress.binding(for: category)
                         )) {
                             dhikrCard(dhikr, index: index)
                         }
@@ -36,7 +40,7 @@ struct AthkarListView: View {
                 .padding(.top, 8)
             }
         }
-        .navigationTitle(category.rawValue)
+        .navigationTitle(LocalizedStringKey(category.rawValue))
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(.hidden, for: .navigationBar)
         .foregroundColor(.adaptiveText(scheme))
@@ -47,7 +51,7 @@ struct AthkarListView: View {
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(category.arabicTitle)
-                .font(.system(size: 28, weight: .bold))
+                .font(.quran(size: 30))
                 .foregroundColor(.adaptiveText(scheme))
 
             HStack(spacing: 16) {
@@ -157,10 +161,10 @@ struct AthkarListView: View {
 
             // Arabic text
             Text(dhikr.arabic)
-                .font(.system(size: 20))
+                .font(.quran(size: 22))
                 .foregroundColor(.adaptiveText(scheme))
                 .multilineTextAlignment(.trailing)
-                .lineSpacing(8)
+                .lineSpacing(10)
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .lineLimit(3)
 

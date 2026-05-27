@@ -2,7 +2,8 @@ import SwiftUI
 
 struct PrayerSettingsView: View {
     @Environment(\.colorScheme) private var scheme
-    
+    @StateObject private var settings = SettingsManager.shared
+
     private let prayers = ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"]
     
     @AppStorage("adjust_Fajr") private var fajrAdj: Int = 0
@@ -21,27 +22,31 @@ struct PrayerSettingsView: View {
                     
                     // MARK: - Calculation Method
                     sectionLabel("CALCULATION METHOD")
-                    
-                    VStack(spacing: 0) {
+
+                    NavigationLink {
+                        CalculationMethodView()
+                    } label: {
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Muftiyat KZ")
+                                Text(settings.calculationMethod.title)
                                     .font(.system(size: 17, weight: .medium))
                                     .foregroundColor(.adaptiveText(scheme))
-                                
-                                Text("Default method for Kazakhstan")
+
+                                Text(settings.calculationMethod.subtitle)
                                     .font(.caption)
                                     .foregroundColor(.secondaryText(scheme))
                             }
-                            
+
                             Spacer()
-                            
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.adaptiveAccent(scheme))
-                                .font(.title3)
+
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.secondaryText(scheme))
+                                .font(.caption)
                         }
                         .padding(.vertical, 10)
+                        .contentShape(Rectangle())
                     }
+                    .buttonStyle(.plain)
                     .padding(16)
                     .background(
                         RoundedRectangle(cornerRadius: 28)
@@ -121,12 +126,16 @@ struct PrayerSettingsView: View {
         }
         .navigationTitle("Prayer Settings")
         .navigationBarTitleDisplayMode(.inline)
+        .onDisappear {
+            // Time adjustments changed → refresh scheduled prayer notifications.
+            NotificationManager.shared.reschedule(using: PrayerTimesManager.shared.allDays)
+        }
     }
     
     // MARK: - Components
     
     private func sectionLabel(_ text: String) -> some View {
-        Text(text)
+        Text(LocalizedStringKey(text))
             .font(.caption.weight(.semibold))
             .foregroundColor(.sectionTitle(scheme))
             .padding(.horizontal)

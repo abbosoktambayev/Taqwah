@@ -104,9 +104,9 @@ struct AthkarDetailView: View {
     private var arabicSection: some View {
         VStack(spacing: 12) {
             Text(currentDhikr.arabic)
-                .font(.system(size: 28))
+                .font(.quran(size: 30))
                 .multilineTextAlignment(.center)
-                .lineSpacing(14)
+                .lineSpacing(16)
                 .foregroundColor(.adaptiveText(scheme))
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 24)
