@@ -93,7 +93,7 @@ TaqwahWidget/          # WidgetKit extension
 ---
 
 ## Credits
-- Prayer times: [Muftiyat KZ (ДУМК)](https://api.muftyat.kz) & [Aladhan API](https://aladhan.com).
+- Prayer times: [Muftiyat KZ (ДУМК)](https://namaz.muftyat.kz/ru/namaz/api/) & [Aladhan API](https://aladhan.com).
 - Athkar: *Hisn al-Muslim* (Fortress of the Muslim).
 - Arabic typeface: [Amiri Quran](https://github.com/alif-type/amiri) (OFL).
 
