@@ -159,6 +159,56 @@ final class TaqwahCoreTests: XCTestCase {
 
     // MARK: - Muftyat decoding
 
+    // MARK: - TodayFlow (worship-flow engine)
+
+    /// Today at the given hour:minute.
+    private func todayAt(_ hour: Int, _ minute: Int) -> Date {
+        calendar.date(bySettingHour: hour, minute: minute, second: 0, of: Date())!
+    }
+
+    private var flowDay: PrayerDay {
+        makeDay(fajr: "05:00", sunrise: "06:30", dhuhr: "13:00",
+                asr: "17:00", maghrib: "20:00", isha: "21:30")
+    }
+
+    func testFlowBeforeFajrAtNight() {
+        XCTAssertEqual(TodayFlow.kind(for: flowDay, now: todayAt(3, 0), weekday: 4), .beforeFajr)
+    }
+
+    func testFlowAfterFajrShowsAfterPrayer() {
+        XCTAssertEqual(TodayFlow.kind(for: flowDay, now: todayAt(5, 10), weekday: 4),
+                       .afterPrayer(prayer: "Fajr"))
+    }
+
+    func testFlowMorningAthkar() {
+        XCTAssertEqual(TodayFlow.kind(for: flowDay, now: todayAt(9, 0), weekday: 4), .morningAthkar)
+    }
+
+    func testFlowDaytimeGapBetweenDhuhrAndAsr() {
+        XCTAssertEqual(TodayFlow.kind(for: flowDay, now: todayAt(14, 30), weekday: 4), .daytime)
+    }
+
+    func testFlowEveningAthkar() {
+        XCTAssertEqual(TodayFlow.kind(for: flowDay, now: todayAt(18, 30), weekday: 4), .eveningAthkar)
+    }
+
+    func testFlowBeforeSleepAfterIsha() {
+        XCTAssertEqual(TodayFlow.kind(for: flowDay, now: todayAt(22, 30), weekday: 4), .beforeSleep)
+    }
+
+    func testFlowJummahOnFridayBeforeDhuhr() {
+        // Friday (weekday 6), 11:00 is within 3h before Dhuhr (13:00).
+        XCTAssertEqual(TodayFlow.kind(for: flowDay, now: todayAt(11, 0), weekday: 6), .jummah)
+    }
+
+    func testFlowAfterPrayerWinsOverMorning() {
+        // 13:05 is inside Dhuhr's after-prayer window, so it beats the daytime gap.
+        XCTAssertEqual(TodayFlow.kind(for: flowDay, now: todayAt(13, 5), weekday: 4),
+                       .afterPrayer(prayer: "Dhuhr"))
+    }
+
+    // MARK: - Muftyat decoding
+
     func testMuftyatResponseDecodesToPrayerDays() throws {
         let json = """
         {"result":[{"imsak":"06:46","fajr":"06:36","sunrise":"08:13","dhuhr":"12:23",

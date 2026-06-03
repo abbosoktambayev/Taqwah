@@ -3698,6 +3698,305 @@
           }
         }
       }
+    },
+    "TODAY": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "СЕГОДНЯ"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "БҮГІН"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BUGUN"
+          }
+        }
+      }
+    },
+    "Before Fajr": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перед Фаджром"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Фаджрға дейін"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fajrdan oldin"
+          }
+        }
+      }
+    },
+    "A quiet time for tahajjud and rest.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тихое время для тахаджуда и отдыха."
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тәһәжжүд пен демалысқа арналған тыныш уақыт."
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tahajjud va dam olish uchun sokin vaqt."
+          }
+        }
+      }
+    },
+    "After the prayer": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "После молитвы"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Намаздан кейін"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Namozdan keyin"
+          }
+        }
+      }
+    },
+    "Recite the after-prayer remembrances.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Прочитайте азкары после молитвы."
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Намаздан кейінгі зікірлерді оқыңыз."
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Namozdan keyingi zikrlarni o'qing."
+          }
+        }
+      }
+    },
+    "Jummah Mubarak": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jummah Mubarak"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jummah Mubarak"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jummah Mubarak"
+          }
+        }
+      }
+    },
+    "Read Surah Al-Kahf before Jummah.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Прочитайте суру Аль-Кахф перед Джумой."
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Жұмаға дейін Кәһф сүресін оқыңыз."
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jumadan oldin Kahf surasini o'qing."
+          }
+        }
+      }
+    },
+    "Morning Athkar": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Утренние азкары"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Таңғы зікірлер"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tonggi zikrlar"
+          }
+        }
+      }
+    },
+    "Begin your day with the morning remembrances.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Начните день с утренних азкаров."
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Күніңізді таңғы зікірлермен бастаңыз."
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kuningizni tonggi zikrlar bilan boshlang."
+          }
+        }
+      }
+    },
+    "Evening Athkar": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вечерние азкары"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Кешкі зікірлер"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kechki zikrlar"
+          }
+        }
+      }
+    },
+    "Wind down with the evening remembrances.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Завершите день вечерними азкарами."
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Кешкі зікірлермен тынышталыңыз."
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kechki zikrlar bilan tinchlaning."
+          }
+        }
+      }
+    },
+    "End your day with the bedtime remembrances.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Завершите день азкарами перед сном."
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Күніңізді ұйқы алдындағы зікірлермен аяқтаңыз."
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kuningizni uyqu oldidan zikrlar bilan yakunlang."
+          }
+        }
+      }
+    },
+    "Keep your prayer tracker up to date.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отмечайте свои молитвы в трекере."
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Намаз трекеріңізді жаңартып отырыңыз."
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Namoz kuzatuvingizni yangilab boring."
+          }
+        }
+      }
     }
   },
   "version": "1.1"

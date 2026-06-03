@@ -11,19 +11,19 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		F1F1F1F1F1F1F1F1F1F1000B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 026F47B62ECEFBE90091E7F2 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F1F1F1F1F1F1F1F1F1F10003;
-			remoteInfo = TaqwahWidgetExtension;
-		};
 		AA0000000000000000000B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 026F47B62ECEFBE90091E7F2 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 026F47BD2ECEFBE90091E7F2;
 			remoteInfo = Taqwah;
+		};
+		F1F1F1F1F1F1F1F1F1F1000B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 026F47B62ECEFBE90091E7F2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F1F1F1F1F1F1F1F1F1F10003;
+			remoteInfo = TaqwahWidgetExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -44,8 +44,8 @@
 /* Begin PBXFileReference section */
 		026F47BE2ECEFBE90091E7F2 /* Taqwah.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Taqwah.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		02F2E7462FC6928300A72FB8 /* Taqwah.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Taqwah.storekit; sourceTree = "<group>"; };
-		F1F1F1F1F1F1F1F1F1F10001 /* TaqwahWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TaqwahWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA00000000000000000002 /* TaqwahTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TaqwahTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1F1F1F1F1F1F1F1F1F10001 /* TaqwahWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TaqwahWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -64,17 +64,17 @@
 			path = Taqwah;
 			sourceTree = "<group>";
 		};
+		AA00000000000000000003 /* TaqwahTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = TaqwahTests;
+			sourceTree = "<group>";
+		};
 		F1F1F1F1F1F1F1F1F1F10002 /* TaqwahWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				F1F1F1F1F1F1F1F1F1F1000E /* Exceptions for "TaqwahWidget" folder in "TaqwahWidgetExtension" target */,
 			);
 			path = TaqwahWidget;
-			sourceTree = "<group>";
-		};
-		AA00000000000000000003 /* TaqwahTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = TaqwahTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -87,14 +87,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F1F1F1F1F1F1F1F1F1F10005 /* Frameworks */ = {
+		AA00000000000000000005 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AA00000000000000000005 /* Frameworks */ = {
+		F1F1F1F1F1F1F1F1F1F10005 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -152,28 +152,6 @@
 			productReference = 026F47BE2ECEFBE90091E7F2 /* Taqwah.app */;
 			productType = "com.apple.product-type.application";
 		};
-		F1F1F1F1F1F1F1F1F1F10003 /* TaqwahWidgetExtension */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F1F1F1F1F1F1F1F1F1F10007 /* Build configuration list for PBXNativeTarget "TaqwahWidgetExtension" */;
-			buildPhases = (
-				F1F1F1F1F1F1F1F1F1F10004 /* Sources */,
-				F1F1F1F1F1F1F1F1F1F10005 /* Frameworks */,
-				F1F1F1F1F1F1F1F1F1F10006 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				F1F1F1F1F1F1F1F1F1F10002 /* TaqwahWidget */,
-			);
-			name = TaqwahWidgetExtension;
-			packageProductDependencies = (
-			);
-			productName = TaqwahWidgetExtension;
-			productReference = F1F1F1F1F1F1F1F1F1F10001 /* TaqwahWidgetExtension.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 		AA00000000000000000001 /* TaqwahTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AA00000000000000000007 /* Build configuration list for PBXNativeTarget "TaqwahTests" */;
@@ -197,6 +175,28 @@
 			productReference = AA00000000000000000002 /* TaqwahTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		F1F1F1F1F1F1F1F1F1F10003 /* TaqwahWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F1F1F1F1F1F1F1F1F1F10007 /* Build configuration list for PBXNativeTarget "TaqwahWidgetExtension" */;
+			buildPhases = (
+				F1F1F1F1F1F1F1F1F1F10004 /* Sources */,
+				F1F1F1F1F1F1F1F1F1F10005 /* Frameworks */,
+				F1F1F1F1F1F1F1F1F1F10006 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				F1F1F1F1F1F1F1F1F1F10002 /* TaqwahWidget */,
+			);
+			name = TaqwahWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = TaqwahWidgetExtension;
+			productReference = F1F1F1F1F1F1F1F1F1F10001 /* TaqwahWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -210,12 +210,12 @@
 					026F47BD2ECEFBE90091E7F2 = {
 						CreatedOnToolsVersion = 26.0;
 					};
-					F1F1F1F1F1F1F1F1F1F10003 = {
-						CreatedOnToolsVersion = 26.0;
-					};
 					AA00000000000000000001 = {
 						CreatedOnToolsVersion = 26.0;
 						TestTargetID = 026F47BD2ECEFBE90091E7F2;
+					};
+					F1F1F1F1F1F1F1F1F1F10003 = {
+						CreatedOnToolsVersion = 26.0;
 					};
 				};
 			};
@@ -251,14 +251,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F1F1F1F1F1F1F1F1F1F10006 /* Resources */ = {
+		AA00000000000000000006 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AA00000000000000000006 /* Resources */ = {
+		F1F1F1F1F1F1F1F1F1F10006 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -275,14 +275,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F1F1F1F1F1F1F1F1F1F10004 /* Sources */ = {
+		AA00000000000000000004 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AA00000000000000000004 /* Sources */ = {
+		F1F1F1F1F1F1F1F1F1F10004 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -292,15 +292,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		F1F1F1F1F1F1F1F1F1F1000A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F1F1F1F1F1F1F1F1F1F10003 /* TaqwahWidgetExtension */;
-			targetProxy = F1F1F1F1F1F1F1F1F1F1000B /* PBXContainerItemProxy */;
-		};
 		AA0000000000000000000A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 026F47BD2ECEFBE90091E7F2 /* Taqwah */;
 			targetProxy = AA0000000000000000000B /* PBXContainerItemProxy */;
+		};
+		F1F1F1F1F1F1F1F1F1F1000A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F1F1F1F1F1F1F1F1F1F10003 /* TaqwahWidgetExtension */;
+			targetProxy = F1F1F1F1F1F1F1F1F1F1000B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -498,6 +498,46 @@
 			};
 			name = Release;
 		};
+		AA00000000000000000008 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8T7DV459A3;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.abbos.TaqwahTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Taqwah.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Taqwah";
+			};
+			name = Debug;
+		};
+		AA00000000000000000009 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8T7DV459A3;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.abbos.TaqwahTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Taqwah.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Taqwah";
+			};
+			name = Release;
+		};
 		F1F1F1F1F1F1F1F1F1F10008 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -554,46 +594,6 @@
 			};
 			name = Release;
 		};
-		AA00000000000000000008 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8T7DV459A3;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.abbos.TaqwahTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Taqwah.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Taqwah";
-			};
-			name = Debug;
-		};
-		AA00000000000000000009 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8T7DV459A3;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.abbos.TaqwahTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Taqwah.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Taqwah";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -615,20 +615,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F1F1F1F1F1F1F1F1F1F10007 /* Build configuration list for PBXNativeTarget "TaqwahWidgetExtension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F1F1F1F1F1F1F1F1F1F10008 /* Debug */,
-				F1F1F1F1F1F1F1F1F1F10009 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		AA00000000000000000007 /* Build configuration list for PBXNativeTarget "TaqwahTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AA00000000000000000008 /* Debug */,
 				AA00000000000000000009 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F1F1F1F1F1F1F1F1F1F10007 /* Build configuration list for PBXNativeTarget "TaqwahWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F1F1F1F1F1F1F1F1F1F10008 /* Debug */,
+				F1F1F1F1F1F1F1F1F1F10009 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

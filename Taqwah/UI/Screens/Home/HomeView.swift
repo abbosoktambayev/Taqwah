@@ -10,7 +10,10 @@ struct HomeView: View {
     @State private var remainingTime: String = ""
     @State private var nextPrayerTime: String = ""
     @State private var nextIsSunrise: Bool = false
+    @State private var flowKind: TodayFlowKind = .daytime
     @State private var countdownTimer: DispatchSourceTimer?
+    @StateObject private var tracker = PrayerTrackerManager.shared
+    @StateObject private var athkarProgress = AthkarProgressManager.shared
 
     // Identifier for tracking changes
     private var prayerTimesIdentifier: String {
@@ -35,6 +38,7 @@ struct HomeView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 26) {
                         headerSection
+                        todayFlowCard
                         nextPrayerSection
                         todaysPrayerSection
                     }
@@ -53,12 +57,14 @@ struct HomeView: View {
 
             if let prayer = manager.todayPrayer {
                 updateNextPrayer(prayer: prayer)
+                updateFlow(prayer: prayer)
                 startCountdownTimer(prayer: prayer)
             }
         }
         .onChange(of: prayerTimesIdentifier) { _, _ in
             if let prayer = manager.todayPrayer {
                 updateNextPrayer(prayer: prayer)
+                updateFlow(prayer: prayer)
                 startCountdownTimer(prayer: prayer)
             }
         }
@@ -80,6 +86,7 @@ struct HomeView: View {
         timer.schedule(deadline: .now(), repeating: 1.0)
         timer.setEventHandler {
             updateNextPrayer(prayer: prayer)
+            updateFlow(prayer: prayer)
         }
         timer.resume()
         countdownTimer = timer
@@ -126,6 +133,114 @@ struct HomeView: View {
             }
         }
         .padding(.horizontal)
+    }
+
+    // MARK: - Today Worship Flow
+
+    private struct FlowPresentation {
+        let icon: String
+        let title: LocalizedStringKey
+        let subtitle: LocalizedStringKey
+        let athkar: AthkarCategory?
+        let opensPrayers: Bool
+    }
+
+    private func updateFlow(prayer: PrayerDay) {
+        let weekday = Calendar.current.component(.weekday, from: Date())
+        let newKind = TodayFlow.kind(for: prayer, now: Date(), weekday: weekday)
+        if newKind != flowKind { flowKind = newKind }
+    }
+
+    private func flowPresentation(_ kind: TodayFlowKind) -> FlowPresentation {
+        switch kind {
+        case .beforeFajr:
+            return .init(icon: "moon.stars.fill", title: "Before Fajr",
+                         subtitle: "A quiet time for tahajjud and rest.",
+                         athkar: nil, opensPrayers: false)
+        case .afterPrayer:
+            return .init(icon: "hands.and.sparkles.fill", title: "After the prayer",
+                         subtitle: "Recite the after-prayer remembrances.",
+                         athkar: .afterPrayer, opensPrayers: false)
+        case .jummah:
+            return .init(icon: "book.closed.fill", title: "Jummah Mubarak",
+                         subtitle: "Read Surah Al-Kahf before Jummah.",
+                         athkar: nil, opensPrayers: false)
+        case .morningAthkar:
+            return .init(icon: "sun.and.horizon.fill", title: "Morning Athkar",
+                         subtitle: "Begin your day with the morning remembrances.",
+                         athkar: .morning, opensPrayers: false)
+        case .eveningAthkar:
+            return .init(icon: "sunset.fill", title: "Evening Athkar",
+                         subtitle: "Wind down with the evening remembrances.",
+                         athkar: .evening, opensPrayers: false)
+        case .beforeSleep:
+            return .init(icon: "bed.double.fill", title: "Before Sleep",
+                         subtitle: "End your day with the bedtime remembrances.",
+                         athkar: .sleep, opensPrayers: false)
+        case .daytime:
+            return .init(icon: "checkmark.circle.fill", title: "Today's Prayers",
+                         subtitle: "Keep your prayer tracker up to date.",
+                         athkar: nil, opensPrayers: true)
+        }
+    }
+
+    @ViewBuilder
+    private var todayFlowCard: some View {
+        if manager.todayPrayer != nil {
+            let p = flowPresentation(flowKind)
+            Group {
+                if let cat = p.athkar {
+                    NavigationLink { AthkarListView(category: cat) } label: { flowCardBody(p) }
+                        .buttonStyle(.plain)
+                } else if p.opensPrayers {
+                    Button { AppRouter.shared.selectedTab = .prayers } label: { flowCardBody(p) }
+                        .buttonStyle(.plain)
+                } else {
+                    flowCardBody(p)
+                }
+            }
+            .padding(.horizontal)
+            .animation(.easeInOut(duration: 0.35), value: flowKind)
+        }
+    }
+
+    private func flowCardBody(_ p: FlowPresentation) -> some View {
+        let interactive = p.athkar != nil || p.opensPrayers
+        return HStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(Color.brandDim)
+                    .frame(width: 52, height: 52)
+                Image(systemName: p.icon)
+                    .font(.system(size: 22, weight: .medium))
+                    .foregroundColor(.mutedEmerald)
+            }
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text("TODAY")
+                    .font(.mono(10)).tracking(0.8)
+                    .foregroundColor(.ter)
+                Text(p.title)
+                    .font(.headline)
+                    .foregroundColor(.adaptiveText(scheme))
+                Text(p.subtitle)
+                    .font(.subheadline)
+                    .foregroundColor(.secondaryText(scheme))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer(minLength: 8)
+
+            if interactive {
+                Image(systemName: "chevron.right")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundColor(.ter)
+            }
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: 28).fill(Color.cardBackground(scheme)))
+        .overlay(RoundedRectangle(cornerRadius: 28).stroke(Color.cardBorder(scheme), lineWidth: 1))
     }
 
     private var nextPrayerSection: some View {
