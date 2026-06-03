@@ -356,19 +356,19 @@
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld/%lld готово"
+            "value": "%lld/%lld выполнено"
           }
         },
         "kk": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld/%lld дайын"
+            "value": "%lld/%lld орындалды"
           }
         },
         "uz": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld/%lld tayyor"
+            "value": "%lld/%lld bajarildi"
           }
         }
       }
@@ -4104,6 +4104,160 @@
           "stringUnit": {
             "state": "translated",
             "value": "Namoz kuzatuvingizni yangilab boring."
+          }
+        }
+      }
+    },
+    "Daily Athkar": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ежедневные азкары"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Күнделікті зікірлер"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kundalik zikrlar"
+          }
+        }
+      }
+    },
+    "Completed today": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сегодня завершено"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Бүгін аяқталды"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bugun yakunlandi"
+          }
+        }
+      }
+    },
+    "Continue": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Продолжить"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Жалғастыру"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Davom etish"
+          }
+        }
+      }
+    },
+    "Review": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Повторить"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Қайталау"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qayta ko‘rish"
+          }
+        }
+      }
+    },
+    "%lld/%lld done · Continue #%lld": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld/%lld выполнено · продолжить #%lld"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld/%lld орындалды · #%lld жалғастыру"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld/%lld bajarildi · #%lld davom etish"
+          }
+        }
+      }
+    },
+    "Continue #%lld": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Продолжить #%lld"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "#%lld жалғастыру"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "#%lld davom etish"
+          }
+        }
+      }
+    },
+    "%lldd streak": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "серия %lld дн."
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld күн серия"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld kunlik seriya"
           }
         }
       }

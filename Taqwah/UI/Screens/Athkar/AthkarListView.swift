@@ -10,6 +10,10 @@ struct AthkarListView: View {
         progress.completed(for: category)
     }
 
+    private var status: AthkarCategoryProgressSnapshot {
+        progress.status(for: category)
+    }
+
     private var athkarList: [Dhikr] {
         category.athkar
     }
@@ -70,6 +74,24 @@ struct AthkarListView: View {
                     .font(.subheadline)
                 }
             }
+
+            NavigationLink(destination: AthkarDetailView(
+                athkarList: athkarList,
+                startIndex: status.resumeIndex,
+                completedIndices: progress.binding(for: category)
+            )) {
+                HStack(spacing: 8) {
+                    Image(systemName: status.isComplete ? "arrow.counterclockwise" : "play.fill")
+                    Text(status.isComplete ? "Review" : "Continue")
+                }
+                .font(.caption.weight(.semibold))
+                .foregroundColor(status.isComplete ? .prayerAccent : .adaptiveAccent(scheme))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(status.isComplete ? Color.goldDim : Color.brandDim)
+                .clipShape(Capsule())
+            }
+            .buttonStyle(.plain)
 
             // Progress bar
             if !completedIndices.isEmpty {

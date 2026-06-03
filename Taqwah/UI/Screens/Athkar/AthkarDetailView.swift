@@ -5,6 +5,7 @@ struct AthkarDetailView: View {
     let startIndex: Int
     @Binding var completedIndices: Set<Int>
     @Environment(\.colorScheme) private var scheme
+    @StateObject private var progressManager = AthkarProgressManager.shared
     @StateObject private var favorites = AthkarFavoritesManager.shared
 
     @State private var currentIndex: Int = 0
@@ -15,7 +16,7 @@ struct AthkarDetailView: View {
         athkarList[currentIndex]
     }
 
-    private var progress: CGFloat {
+    private var countProgress: CGFloat {
         guard currentDhikr.repetitions > 0 else { return 0 }
         return min(CGFloat(counter) / CGFloat(currentDhikr.repetitions), 1.0)
     }
@@ -73,7 +74,8 @@ struct AthkarDetailView: View {
         }
         .foregroundColor(.adaptiveText(scheme))
         .onAppear {
-            currentIndex = startIndex
+            currentIndex = min(max(startIndex, 0), max(athkarList.count - 1, 0))
+            syncCurrentState()
         }
     }
 
@@ -105,7 +107,7 @@ struct AthkarDetailView: View {
 
                     RoundedRectangle(cornerRadius: 3)
                         .fill(Color.adaptiveAccent(scheme))
-                        .frame(width: geo.size.width * CGFloat(currentIndex) / max(CGFloat(athkarList.count), 1))
+                        .frame(width: geo.size.width * CGFloat(currentIndex + 1) / max(CGFloat(athkarList.count), 1))
                         .animation(.easeInOut, value: currentIndex)
                 }
             }
@@ -187,6 +189,7 @@ struct AthkarDetailView: View {
                     if counter >= currentDhikr.repetitions {
                         isCompleted = true
                         completedIndices.insert(currentIndex)
+                        progressManager.recordOpened(currentDhikr.category, index: currentIndex)
                         UINotificationFeedbackGenerator().notificationOccurred(.success)
 
                         // Auto-advance after short delay
@@ -204,7 +207,7 @@ struct AthkarDetailView: View {
 
                     // Progress arc
                     Circle()
-                        .trim(from: 0, to: progress)
+                        .trim(from: 0, to: countProgress)
                         .stroke(
                             isCompleted ? Color.adaptiveAccent(scheme) : Color.adaptiveAccent(scheme),
                             style: StrokeStyle(lineWidth: 8, lineCap: .round)
@@ -281,15 +284,20 @@ struct AthkarDetailView: View {
     private func goToNext() {
         guard currentIndex < athkarList.count - 1 else { return }
         currentIndex += 1
-        counter = 0
-        isCompleted = completedIndices.contains(currentIndex)
+        syncCurrentState()
     }
 
     private func goToPrevious() {
         guard currentIndex > 0 else { return }
         currentIndex -= 1
-        counter = 0
+        syncCurrentState()
+    }
+
+    private func syncCurrentState() {
+        guard athkarList.indices.contains(currentIndex) else { return }
         isCompleted = completedIndices.contains(currentIndex)
+        counter = isCompleted ? currentDhikr.repetitions : 0
+        progressManager.recordOpened(currentDhikr.category, index: currentIndex)
     }
 }
 

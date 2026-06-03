@@ -3,6 +3,7 @@ import SwiftUI
 struct AthkarView: View {
 
     @Environment(\.colorScheme) private var scheme
+    @StateObject private var progress = AthkarProgressManager.shared
     @StateObject private var favorites = AthkarFavoritesManager.shared
 
     private let columns = [
@@ -18,6 +19,8 @@ struct AthkarView: View {
 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 24) {
+
+                        dailyStatusSection
 
                         Text("Choose a category")
                             .foregroundColor(.secondaryText(scheme))
@@ -54,6 +57,43 @@ struct AthkarView: View {
             .navigationBarTitleDisplayMode(.large)
             .foregroundColor(.adaptiveText(scheme))
         }
+    }
+
+    // MARK: - Daily Status
+
+    private var dailyStatusSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("TODAY")
+                    .font(.mono(10))
+                    .tracking(0.8)
+                    .foregroundColor(.ter)
+
+                Spacer()
+
+                Text("\(progress.dailyCoreCompletedCount())/\(AthkarProgressManager.dailyCoreCategories.count)")
+                    .font(.caption.weight(.semibold))
+                    .foregroundColor(.adaptiveAccent(scheme))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(Color.brandDim)
+                    .clipShape(Capsule())
+            }
+
+            VStack(spacing: 10) {
+                ForEach(AthkarProgressManager.dailyCoreCategories) { category in
+                    NavigationLink(destination: AthkarDetailView(
+                        athkarList: category.athkar,
+                        startIndex: progress.resumeIndex(for: category),
+                        completedIndices: progress.binding(for: category)
+                    )) {
+                        AthkarDailyStatusRow(status: progress.status(for: category))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .padding(.horizontal)
     }
 
     // MARK: - Category Card
@@ -138,5 +178,56 @@ struct AthkarView: View {
     Group {
         AthkarView().preferredColorScheme(.dark)
         AthkarView().preferredColorScheme(.light)
+    }
+}
+
+struct AthkarDailyStatusRow: View {
+    let status: AthkarCategoryProgressSnapshot
+    @Environment(\.colorScheme) private var scheme
+
+    var body: some View {
+        HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(status.isComplete ? Color.goldDim : Color.brandDim)
+                    .frame(width: 42, height: 42)
+                Image(systemName: status.isComplete ? "checkmark.circle.fill" : status.category.icon)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(status.isComplete ? .prayerAccent : .adaptiveAccent(scheme))
+            }
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(LocalizedStringKey(status.category.rawValue))
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundColor(.adaptiveText(scheme))
+
+                HStack(spacing: 6) {
+                    Text("\(status.completedCount)/\(status.totalCount) done")
+                    if status.streak > 0 {
+                        Text("·")
+                        Text("\(status.streak)d streak")
+                    }
+                }
+                .font(.caption)
+                .foregroundColor(.secondaryText(scheme))
+            }
+
+            Spacer(minLength: 8)
+
+            Text(status.isComplete ? "Review" : "Continue #\(status.resumeIndex + 1)")
+                .font(.caption.weight(.semibold))
+                .foregroundColor(status.isComplete ? .prayerAccent : .adaptiveAccent(scheme))
+
+            Image(systemName: "chevron.right")
+                .font(.caption.weight(.semibold))
+                .foregroundColor(.ter)
+        }
+        .padding(14)
+        .background(Color.cardBackground(scheme))
+        .clipShape(RoundedRectangle(cornerRadius: 22))
+        .overlay(
+            RoundedRectangle(cornerRadius: 22)
+                .stroke(Color.cardBorder(scheme), lineWidth: 1)
+        )
     }
 }

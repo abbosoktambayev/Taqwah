@@ -13,6 +13,12 @@ final class TaqwahCoreTests: XCTestCase {
         for name in ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"] {
             UserDefaults.standard.removeObject(forKey: "adjust_\(name)")
         }
+        AthkarProgressManager.shared.resetForTesting()
+    }
+
+    override func tearDown() {
+        AthkarProgressManager.shared.resetForTesting()
+        super.tearDown()
     }
 
     // MARK: - Helpers
@@ -24,6 +30,14 @@ final class TaqwahCoreTests: XCTestCase {
     ) -> PrayerDay {
         PrayerDay(date: Date(), fajr: fajr, sunrise: sunrise,
                   dhuhr: dhuhr, asr: asr, maghrib: maghrib, isha: isha)
+    }
+
+    private func date(_ year: Int, _ month: Int, _ day: Int) -> Date {
+        calendar.date(from: DateComponents(year: year, month: month, day: day, hour: 12))!
+    }
+
+    private func allIndices(for category: AthkarCategory) -> Set<Int> {
+        Set(category.athkar.indices)
     }
 
     // MARK: - String.cleanTime
@@ -136,6 +150,59 @@ final class TaqwahCoreTests: XCTestCase {
             category.athkar.map(\.stableID)
         }
         XCTAssertEqual(Set(ids).count, ids.count)
+    }
+
+    // MARK: - Athkar smart progress
+
+    func testAthkarResumeUsesLastOpenedIndex() {
+        let manager = AthkarProgressManager.shared
+        let day = date(2026, 6, 4)
+
+        manager.recordOpened(.morning, index: 5, on: day)
+
+        XCTAssertEqual(manager.resumeIndex(for: .morning, on: day), 5)
+    }
+
+    func testAthkarResumeMovesToNextIncompleteAfterCompletedCurrentItem() {
+        let manager = AthkarProgressManager.shared
+        let day = date(2026, 6, 4)
+
+        manager.recordOpened(.morning, index: 5, on: day)
+        manager.setCompleted([5], for: .morning, on: day)
+
+        XCTAssertEqual(manager.resumeIndex(for: .morning, on: day), 6)
+    }
+
+    func testAthkarResumeStartsAtFirstIncompleteWithoutLastOpen() {
+        let manager = AthkarProgressManager.shared
+        let day = date(2026, 6, 4)
+
+        manager.setCompleted([0, 1, 2], for: .morning, on: day)
+
+        XCTAssertEqual(manager.resumeIndex(for: .morning, on: day), 3)
+    }
+
+    func testAthkarStreakKeepsYesterdayRunUntilTodayIsDone() {
+        let manager = AthkarProgressManager.shared
+        let today = date(2026, 6, 4)
+        let yesterday = calendar.date(byAdding: .day, value: -1, to: today)!
+        let twoDaysAgo = calendar.date(byAdding: .day, value: -2, to: today)!
+
+        manager.setCompleted(allIndices(for: .morning), for: .morning, on: twoDaysAgo)
+        manager.setCompleted(allIndices(for: .morning), for: .morning, on: yesterday)
+
+        XCTAssertEqual(manager.streak(for: .morning, endingAt: today, calendar: calendar), 2)
+    }
+
+    func testAthkarStreakIncludesTodayWhenComplete() {
+        let manager = AthkarProgressManager.shared
+        let today = date(2026, 6, 4)
+        let yesterday = calendar.date(byAdding: .day, value: -1, to: today)!
+
+        manager.setCompleted(allIndices(for: .sleep), for: .sleep, on: yesterday)
+        manager.setCompleted(allIndices(for: .sleep), for: .sleep, on: today)
+
+        XCTAssertEqual(manager.streak(for: .sleep, endingAt: today, calendar: calendar), 2)
     }
 
     // MARK: - CalculationMethod provider mapping

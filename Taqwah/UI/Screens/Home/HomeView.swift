@@ -39,6 +39,7 @@ struct HomeView: View {
                     VStack(alignment: .leading, spacing: 26) {
                         headerSection
                         todayFlowCard
+                        dailyAthkarSection
                         nextPrayerSection
                         todaysPrayerSection
                     }
@@ -190,7 +191,7 @@ struct HomeView: View {
             let p = flowPresentation(flowKind)
             Group {
                 if let cat = p.athkar {
-                    NavigationLink { AthkarListView(category: cat) } label: { flowCardBody(p) }
+                    NavigationLink { athkarDetailDestination(for: cat) } label: { flowCardBody(p) }
                         .buttonStyle(.plain)
                 } else if p.opensPrayers {
                     Button { AppRouter.shared.selectedTab = .prayers } label: { flowCardBody(p) }
@@ -223,10 +224,7 @@ struct HomeView: View {
                 Text(p.title)
                     .font(.headline)
                     .foregroundColor(.adaptiveText(scheme))
-                Text(p.subtitle)
-                    .font(.subheadline)
-                    .foregroundColor(.secondaryText(scheme))
-                    .fixedSize(horizontal: false, vertical: true)
+                flowSubtitle(p)
             }
 
             Spacer(minLength: 8)
@@ -241,6 +239,73 @@ struct HomeView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(RoundedRectangle(cornerRadius: 28).fill(Color.cardBackground(scheme)))
         .overlay(RoundedRectangle(cornerRadius: 28).stroke(Color.cardBorder(scheme), lineWidth: 1))
+    }
+
+    @ViewBuilder
+    private func flowSubtitle(_ p: FlowPresentation) -> some View {
+        if let category = p.athkar {
+            let status = athkarProgress.status(for: category)
+            if status.isComplete {
+                Text("Completed today")
+                    .font(.subheadline)
+                    .foregroundColor(.secondaryText(scheme))
+                    .fixedSize(horizontal: false, vertical: true)
+            } else if status.completedCount > 0 {
+                Text("\(status.completedCount)/\(status.totalCount) done · Continue #\(status.resumeIndex + 1)")
+                    .font(.subheadline)
+                    .foregroundColor(.secondaryText(scheme))
+                    .fixedSize(horizontal: false, vertical: true)
+            } else {
+                Text(p.subtitle)
+                    .font(.subheadline)
+                    .foregroundColor(.secondaryText(scheme))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        } else {
+            Text(p.subtitle)
+                .font(.subheadline)
+                .foregroundColor(.secondaryText(scheme))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private func athkarDetailDestination(for category: AthkarCategory) -> some View {
+        AthkarDetailView(
+            athkarList: category.athkar,
+            startIndex: athkarProgress.resumeIndex(for: category),
+            completedIndices: athkarProgress.binding(for: category)
+        )
+    }
+
+    private var dailyAthkarSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text("Daily Athkar")
+                    .font(.title3)
+                    .bold()
+                    .foregroundColor(.adaptiveText(scheme))
+
+                Spacer()
+
+                Text("\(athkarProgress.dailyCoreCompletedCount())/\(AthkarProgressManager.dailyCoreCategories.count)")
+                    .font(.caption.weight(.semibold))
+                    .foregroundColor(.adaptiveAccent(scheme))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(Color.brandDim)
+                    .clipShape(Capsule())
+            }
+
+            VStack(spacing: 10) {
+                ForEach(AthkarProgressManager.dailyCoreCategories) { category in
+                    NavigationLink { athkarDetailDestination(for: category) } label: {
+                        AthkarDailyStatusRow(status: athkarProgress.status(for: category))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .padding(.horizontal)
     }
 
     private var nextPrayerSection: some View {

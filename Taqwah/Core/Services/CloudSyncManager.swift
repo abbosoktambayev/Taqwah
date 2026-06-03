@@ -30,6 +30,7 @@ final class CloudSyncManager {
     // Keys mirrored to iCloud.
     private let trackerKey = "prayerTracker_v2"
     private let athkarKey = "athkarProgress_data"
+    private let athkarLastOpenKey = "athkarLastOpen_v1"
     private let favoritesKey = "athkarFavorites_v1"
     private let stringKeys = ["selectedColorScheme", "calculationMethod"]
     private let intKeys = ["adjust_Fajr", "adjust_Sunrise", "adjust_Dhuhr",
@@ -96,6 +97,7 @@ final class CloudSyncManager {
         // Dictionary stores: union-merge.
         mergeTracker(defaults: defaults)
         mergeAthkar(defaults: defaults)
+        mergeAthkarLastOpen(defaults: defaults)
         mergeFavorites(defaults: defaults)
 
         // Tell the in-memory managers to refresh from the updated store.
@@ -136,6 +138,24 @@ final class CloudSyncManager {
         }
     }
 
+    private func mergeAthkarLastOpen(defaults: UserDefaults) {
+        let local = decodeAthkarLastOpen(defaults.data(forKey: athkarLastOpenKey))
+        let cloud = decodeAthkarLastOpen(store.data(forKey: athkarLastOpenKey))
+        guard !cloud.isEmpty else { return }
+
+        var merged = local
+        for (category, cloudRecord) in cloud {
+            if let localRecord = merged[category], localRecord.updatedAt >= cloudRecord.updatedAt {
+                continue
+            }
+            merged[category] = cloudRecord
+        }
+        if let data = try? JSONEncoder().encode(merged) {
+            defaults.set(data, forKey: athkarLastOpenKey)
+            store.set(data, forKey: athkarLastOpenKey)
+        }
+    }
+
     private func mergeFavorites(defaults: UserDefaults) {
         let local = Set(defaults.stringArray(forKey: favoritesKey) ?? [])
         let cloud = Set(store.array(forKey: favoritesKey) as? [String] ?? [])
@@ -173,6 +193,7 @@ final class CloudSyncManager {
         }
         if let data = defaults.data(forKey: trackerKey) { store.set(data, forKey: trackerKey) }
         if let data = defaults.data(forKey: athkarKey) { store.set(data, forKey: athkarKey) }
+        if let data = defaults.data(forKey: athkarLastOpenKey) { store.set(data, forKey: athkarLastOpenKey) }
         if let favorites = defaults.stringArray(forKey: favoritesKey) { store.set(favorites, forKey: favoritesKey) }
 
         store.synchronize()
@@ -188,6 +209,12 @@ final class CloudSyncManager {
 
     private func decodeAthkar(_ data: Data?) -> [String: [Int]] {
         guard let data, let v = try? JSONDecoder().decode([String: [Int]].self, from: data)
+        else { return [:] }
+        return v
+    }
+
+    private func decodeAthkarLastOpen(_ data: Data?) -> [String: AthkarLastOpenRecord] {
+        guard let data, let v = try? JSONDecoder().decode([String: AthkarLastOpenRecord].self, from: data)
         else { return [:] }
         return v
     }
