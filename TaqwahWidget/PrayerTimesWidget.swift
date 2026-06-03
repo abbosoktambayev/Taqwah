@@ -46,15 +46,15 @@ struct PrayerTimesView: View {
                     VStack(spacing: 6) {
                         Image(systemName: WidgetStyle.icon(for: item.name))
                             .font(.system(size: 16))
-                            .foregroundStyle(isNext(item.name) ? WidgetStyle.gold : .white.opacity(0.8))
+                            .foregroundStyle(isNext(item.name) ? WidgetStyle.gold : WidgetStyle.text.opacity(0.8))
 
                         Text(item.name)
                             .font(.system(size: 11, weight: .medium))
-                            .foregroundStyle(.white.opacity(0.7))
+                            .foregroundStyle(WidgetStyle.textSecondary)
 
                         Text(item.time)
                             .font(.system(size: 13, weight: .bold, design: .rounded))
-                            .foregroundStyle(isNext(item.name) ? WidgetStyle.gold : .white)
+                            .foregroundStyle(isNext(item.name) ? WidgetStyle.gold : WidgetStyle.text)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 6)
@@ -78,18 +78,18 @@ struct PrayerTimesView: View {
                     HStack(spacing: 14) {
                         Image(systemName: WidgetStyle.icon(for: item.name))
                             .font(.system(size: 18))
-                            .foregroundStyle(isNext(item.name) ? WidgetStyle.gold : .white.opacity(0.85))
+                            .foregroundStyle(isNext(item.name) ? WidgetStyle.gold : WidgetStyle.text.opacity(0.85))
                             .frame(width: 26)
 
                         Text(item.name)
                             .font(.system(size: 17, weight: .medium))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(WidgetStyle.text)
 
                         Spacer()
 
                         Text(item.time)
                             .font(.system(size: 17, weight: .semibold, design: .rounded))
-                            .foregroundStyle(isNext(item.name) ? WidgetStyle.gold : .white.opacity(0.9))
+                            .foregroundStyle(isNext(item.name) ? WidgetStyle.gold : WidgetStyle.text.opacity(0.9))
                     }
                     .padding(.horizontal, 14)
                     .padding(.vertical, 10)
@@ -97,7 +97,7 @@ struct PrayerTimesView: View {
                         RoundedRectangle(cornerRadius: 16)
                             .fill(isNext(item.name)
                                   ? WidgetStyle.gold.opacity(0.15)
-                                  : Color.white.opacity(0.06))
+                                  : WidgetStyle.hairline)
                     )
                 }
             }
@@ -111,11 +111,11 @@ struct PrayerTimesView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Today's Prayers")
                     .font(.system(size: 15, weight: .bold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(WidgetStyle.text)
                 if let snapshot = entry.snapshot {
                     Text(snapshot.hijriDate)
                         .font(.system(size: 11))
-                        .foregroundStyle(.white.opacity(0.6))
+                        .foregroundStyle(WidgetStyle.text.opacity(0.6))
                 }
             }
             Spacer()

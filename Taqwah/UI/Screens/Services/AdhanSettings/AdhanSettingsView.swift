@@ -246,7 +246,7 @@ struct AdhanSettingsView: View {
                     icon: "bell.slash.fill",
                     title: "Notifications Disabled",
                     message: "Enable notifications in Settings to receive prayer reminders.",
-                    tint: .orange
+                    tint: .warningYellow
                 )
             }
             .buttonStyle(.plain)
@@ -297,7 +297,7 @@ struct AdhanSettingsView: View {
     
     private func sectionLabel(_ text: String) -> some View {
         Text(LocalizedStringKey(text))
-            .font(.caption.weight(.semibold))
+            .font(.mono(11)).tracking(0.6)
             .foregroundColor(.sectionTitle(scheme))
             .padding(.horizontal)
     }

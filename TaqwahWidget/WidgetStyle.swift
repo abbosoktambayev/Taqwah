@@ -4,15 +4,19 @@ enum WidgetStyle {
 
     // MARK: - Colors
 
-    static let gold = Color(red: 242 / 255, green: 201 / 255, blue: 76 / 255)
-    static let green = Color(red: 34 / 255, green: 139 / 255, blue: 34 / 255)
+    static let gold = Color(hex: 0xC9A96E)
+    static let green = Color(hex: 0x3E7A63)
+    static let text = Color(hex: 0xF3EBDD)
+    static let textSecondary = Color(hex: 0xF3EBDD).opacity(0.68)
+    static let hairline = Color(hex: 0xF3EBDD).opacity(0.10)
 
-    private static let darkTop = Color(red: 9 / 255, green: 51 / 255, blue: 27 / 255)
-    private static let darkMid = Color(red: 1 / 255, green: 26 / 255, blue: 21 / 255)
+    private static let widgetBase = Color(hex: 0x0D100F)
+    private static let obsidian = Color(hex: 0x0A0A0B)
+    private static let deepElevated = Color(hex: 0x121214)
 
     static var backgroundGradient: LinearGradient {
         LinearGradient(
-            colors: [darkTop, darkMid, .black],
+            colors: [widgetBase, deepElevated, obsidian],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )
@@ -30,6 +34,18 @@ enum WidgetStyle {
         case "Isha":    return "moon.stars.fill"
         default:        return "moon.fill"
         }
+    }
+}
+
+private extension Color {
+    init(hex: UInt, alpha: Double = 1.0) {
+        self.init(
+            .sRGB,
+            red: Double((hex >> 16) & 0xFF) / 255,
+            green: Double((hex >> 8) & 0xFF) / 255,
+            blue: Double(hex & 0xFF) / 255,
+            opacity: alpha
+        )
     }
 }
 

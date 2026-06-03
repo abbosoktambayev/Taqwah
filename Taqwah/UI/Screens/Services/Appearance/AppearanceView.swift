@@ -86,7 +86,7 @@ struct AppearanceView: View {
                 }
                 .overlay(
                     RoundedRectangle(cornerRadius: 14)
-                        .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                        .stroke(Color.cardBorder(scheme), lineWidth: 1)
                 )
 
                 VStack(spacing: 2) {
@@ -122,30 +122,28 @@ struct AppearanceView: View {
     private func previewGradient(for id: String) -> LinearGradient {
         switch id {
         case "light":
-            return LinearGradient(colors: [Color(red: 0.89, green: 0.94, blue: 0.90),
-                                           Color(red: 0.97, green: 0.99, blue: 0.97)],
+            return LinearGradient(colors: [.paper, .softIvory],
                                   startPoint: .top, endPoint: .bottom)
         case "dark":
-            return LinearGradient(colors: [Color(red: 0.04, green: 0.20, blue: 0.11), .black],
+            return LinearGradient(colors: [.obsidian, .deepElevated],
                                   startPoint: .top, endPoint: .bottom)
         default:
-            return LinearGradient(colors: [Color(red: 0.89, green: 0.94, blue: 0.90),
-                                           Color(red: 0.04, green: 0.20, blue: 0.11)],
+            return LinearGradient(colors: [.paper, .obsidian],
                                   startPoint: .top, endPoint: .bottom)
         }
     }
 
     private func previewIconColor(for id: String) -> Color {
         switch id {
-        case "light": return Color(red: 0.13, green: 0.55, blue: 0.13)
-        case "dark":  return Color(red: 242/255, green: 201/255, blue: 76/255)
-        default:      return .white
+        case "light": return .mutedEmerald
+        case "dark":  return .warmGold
+        default:      return .parchment
         }
     }
 
     private func sectionLabel(_ text: String) -> some View {
         Text(LocalizedStringKey(text))
-            .font(.caption.weight(.semibold))
+            .font(.mono(11)).tracking(0.6)
             .foregroundColor(.sectionTitle(scheme))
             .padding(.horizontal)
     }

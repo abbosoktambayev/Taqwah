@@ -151,7 +151,7 @@ struct IslamicCalendarView: View {
                             
                             Text("\(day)")
                                 .font(.system(size: 15, weight: isToday ? .bold : .regular))
-                                .foregroundColor(isToday ? (scheme == .light ? .white : .black) : .adaptiveText(scheme))
+                                .foregroundColor(isToday ? .parchment : .adaptiveText(scheme))
                         }
                         .frame(height: 40)
                     } else {

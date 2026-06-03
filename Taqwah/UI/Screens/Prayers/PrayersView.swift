@@ -42,9 +42,10 @@ struct PrayersView: View {
                                 )
                             }
                         }
-                        .animation(.spring(response: 0.3), value: tracker.revision)
+                        .animation(Motion.standard, value: tracker.revision)
                     }
                 }
+                .safeAreaPadding(.bottom, 96)
             }
             .navigationTitle("Prayer Tracker")
             .navigationBarTitleDisplayMode(.large)
@@ -85,15 +86,15 @@ struct PrayersView: View {
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "flame.fill")
-                        .foregroundColor(.orange)
+                        .foregroundColor(.prayerAccent)
 
                     Text("\(tracker.streak) days")
                         .bold()
-                        .foregroundColor(.orange)
+                        .foregroundColor(.prayerAccent)
 
                     Image(systemName: "chevron.right")
                         .font(.caption2)
-                        .foregroundColor(.orange.opacity(0.7))
+                        .foregroundColor(Color.prayerAccent.opacity(0.7))
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
@@ -180,7 +181,7 @@ struct PrayersView: View {
 
                 Text("\(tracker.completedCount(on: selectedDate))/5")
                     .bold()
-                    .foregroundColor(.green)
+                    .foregroundColor(.adaptiveAccent(scheme))
             }
 
             GeometryReader { geo in
@@ -189,7 +190,7 @@ struct PrayersView: View {
                         .fill(Color.progressTrack(scheme))
 
                     Capsule()
-                        .fill(Color.green)
+                        .fill(Color.adaptiveAccent(scheme))
                         .frame(width: geo.size.width * tracker.progress(on: selectedDate))
                         .animation(.easeInOut(duration: 0.35), value: tracker.revision)
                 }
@@ -234,9 +235,9 @@ struct PrayersView: View {
                 ZStack {
                     if let type {
                         Circle()
-                            .fill(Color.green)
+                            .fill(Color.adaptiveAccent(scheme))
                             .frame(width: 48, height: 48)
-                            .shadow(color: .green.opacity(0.4), radius: 10)
+                            .shadow(color: .accentShadow(scheme), radius: 8)
 
                         if let emoji = type.emoji {
                             Text(emoji)
@@ -244,7 +245,7 @@ struct PrayersView: View {
                         } else {
                             Image(systemName: type.icon)
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .foregroundColor(.parchment)
                         }
                     } else {
                         Circle()
@@ -261,7 +262,7 @@ struct PrayersView: View {
                     if let type {
                         Text("\(time) · \(type.label)")
                             .font(.subheadline)
-                            .foregroundColor(.green)
+                            .foregroundColor(.adaptiveAccent(scheme))
                     } else {
                         Text(time)
                             .foregroundColor(.secondaryText(scheme))
@@ -275,10 +276,10 @@ struct PrayersView: View {
             .clipShape(RoundedRectangle(cornerRadius: 22))
             .overlay(
                 RoundedRectangle(cornerRadius: 22)
-                    .stroke(isDone ? Color.green.opacity(0.3) : Color.cardBorder(scheme), lineWidth: 1)
+                    .stroke(isDone ? Color.adaptiveAccent(scheme).opacity(0.3) : Color.cardBorder(scheme), lineWidth: 1)
             )
             .scaleEffect(isDone ? 0.98 : 1.0)
-            .animation(.spring(response: 0.25), value: isDone)
+            .animation(Motion.standard, value: isDone)
         }
         .buttonStyle(.plain)
         .padding(.horizontal)

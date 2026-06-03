@@ -31,7 +31,7 @@ struct AboutView: View {
                             
                             Image(systemName: "moon.stars.fill")
                                 .font(.system(size: 44))
-                                .foregroundColor(.white)
+                                .foregroundColor(.parchment)
                         }
                         
                         VStack(spacing: 6) {

@@ -65,7 +65,7 @@ struct NextPrayerView: View {
             if let next {
                 Text(next.name)
                     .font(.system(size: 22, weight: .bold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(WidgetStyle.text)
 
                 Text(next.date, style: .timer)
                     .font(.system(size: 26, weight: .bold, design: .rounded))
@@ -75,11 +75,11 @@ struct NextPrayerView: View {
 
                 Text("at \(timeString(next.date))")
                     .font(.system(size: 12))
-                    .foregroundStyle(.white.opacity(0.7))
+                    .foregroundStyle(WidgetStyle.textSecondary)
             } else {
                 Text("Open Taqwah")
                     .font(.footnote)
-                    .foregroundStyle(.white.opacity(0.7))
+                    .foregroundStyle(WidgetStyle.textSecondary)
             }
 
             Spacer(minLength: 0)
@@ -98,7 +98,7 @@ struct NextPrayerView: View {
                 if let next {
                     Text(next.name)
                         .font(.system(size: 26, weight: .bold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(WidgetStyle.text)
 
                     Text(next.date, style: .timer)
                         .font(.system(size: 30, weight: .bold, design: .rounded))
@@ -108,7 +108,7 @@ struct NextPrayerView: View {
 
                     Text("at \(timeString(next.date)) · \(entry.snapshot?.locationName ?? "")")
                         .font(.system(size: 11))
-                        .foregroundStyle(.white.opacity(0.7))
+                        .foregroundStyle(WidgetStyle.textSecondary)
                         .lineLimit(1)
                 }
             }
@@ -133,13 +133,13 @@ struct NextPrayerView: View {
                         .frame(width: 16)
                     Text(ev.name)
                         .font(.system(size: 12, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.85))
+                        .foregroundStyle(WidgetStyle.text.opacity(0.85))
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                     Spacer(minLength: 6)
                     Text(timeString(ev.date))
                         .font(.system(size: 12, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(WidgetStyle.text)
                 }
             }
         }

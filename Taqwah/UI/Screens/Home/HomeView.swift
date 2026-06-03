@@ -39,6 +39,7 @@ struct HomeView: View {
                     }
                     .padding(.top, 8)
                 }
+                .safeAreaPadding(.bottom, 96)
             }
             .navigationTitle("Prayer Times")
             .navigationBarTitleDisplayMode(.inline)
@@ -140,12 +141,12 @@ struct HomeView: View {
                     .foregroundColor(.adaptiveText(scheme))
 
                 Text(remainingTime)
-                    .font(.system(size: 48, weight: .bold))
-                    .foregroundColor(.adaptiveAccent(scheme))
+                    .font(.brandDisplay(52))
+                    .foregroundColor(.prayerAccent)
                     .shadow(
                         color: .accentShadow(scheme),
-                        radius: 12,
-                        y: 6
+                        radius: 10,
+                        y: 5
                     )
 
                 Text("at \(nextPrayerTime)")
@@ -157,26 +158,16 @@ struct HomeView: View {
             .background(
                 ZStack {
                     RoundedRectangle(cornerRadius: 28)
-                        .fill(Color.primary.opacity(scheme == .light ? 0.06 : 0.12))
+                        .fill(Color.cardBackground(scheme))
 
                     RoundedRectangle(cornerRadius: 28)
-                        .stroke(
-                            LinearGradient(
-                                colors: [
-                                    Color.white.opacity(scheme == .light ? 0.6 : 0.15),
-                                    Color.clear
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1.2
-                        )
+                        .stroke(Color.cardBorder(scheme), lineWidth: 1)
                 }
             )
             .shadow(
-                color: Color.black.opacity(scheme == .light ? 0.08 : 0.4),
-                radius: scheme == .light ? 18 : 30,
-                y: scheme == .light ? 8 : 16
+                color: Color.black.opacity(scheme == .light ? 0.06 : 0.18),
+                radius: 16,
+                y: 8
             )
             .clipShape(RoundedRectangle(cornerRadius: 28))
         }
@@ -204,12 +195,12 @@ struct HomeView: View {
                 }
                 .padding(.vertical, 18)
                 .background(
-                    Color.primary.opacity(scheme == .light ? 0.06 : 0.15)
+                    Color.glassFill(scheme)
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 28))
             } else if let error = manager.errorMessage {
                 Text(error)
-                    .foregroundColor(.red)
+                    .foregroundColor(.dangerRed)
                     .padding()
             } else {
                 Text("Prayer times will load soon, inshaAllah.")
@@ -225,7 +216,7 @@ struct HomeView: View {
         HStack {
             HStack(spacing: 12) {
                 Image(systemName: icon)
-                    .foregroundColor(.prayerAccent)
+                    .foregroundColor(.adaptiveAccent(scheme))
                     .font(.system(size: 20))
 
                 Text(name)

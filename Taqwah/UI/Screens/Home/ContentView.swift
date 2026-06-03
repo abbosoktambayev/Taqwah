@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var router = AppRouter.shared
     @StateObject private var localization = LocalizationManager.shared
+    @Environment(\.colorScheme) private var scheme
 
     var body: some View {
         TabView(selection: $router.selectedTab) {
@@ -34,7 +35,7 @@ struct ContentView: View {
                 }
                 .tag(AppTab.services)
         }
-        .accentColor(.green)
+        .tint(.adaptiveAccent(scheme))
         .id(localization.languageCode)
     }
 }

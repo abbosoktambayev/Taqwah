@@ -105,7 +105,7 @@ struct DonateView: View {
 
                 Text(product.displayPrice)
                     .font(.system(size: 16, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
+                    .foregroundColor(.parchment)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                     .background(Capsule().fill(Color.adaptiveAccent(scheme)))

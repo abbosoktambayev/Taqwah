@@ -45,6 +45,7 @@ struct AthkarView: View {
                     }
                     .padding(.top, 8)
                 }
+                .safeAreaPadding(.bottom, 96)
             }
             .navigationTitle("Athkar")
             .navigationBarTitleDisplayMode(.large)
@@ -58,24 +59,24 @@ struct AthkarView: View {
         VStack(alignment: .leading, spacing: 14) {
             ZStack {
                 Circle()
-                    .fill(Color.white.opacity(0.15))
+                    .fill(Color.parchment.opacity(0.14))
                     .frame(width: 56, height: 56)
 
                 Image(systemName: category.icon)
                     .font(.system(size: 26, weight: .medium))
-                    .foregroundColor(.white)
+                    .foregroundColor(.parchment)
             }
 
             Text(LocalizedStringKey(category.rawValue))
                 .font(.title3)
                 .fontWeight(.semibold)
-                .foregroundColor(.white)
+                .foregroundColor(.parchment)
                 .lineLimit(2)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             Text("\(category.athkar.count) athkar")
                 .font(.subheadline)
-                .foregroundColor(.white.opacity(0.75))
+                .foregroundColor(Color.parchment.opacity(0.75))
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -102,7 +103,7 @@ struct AthkarView: View {
                     .fill(Color.cardBackground(scheme))
                     .frame(width: 48, height: 48)
                 Image(systemName: "star.fill")
-                    .foregroundColor(.yellow)
+                    .foregroundColor(.prayerAccent)
             }
 
             VStack(alignment: .leading, spacing: 4) {

@@ -89,7 +89,7 @@ struct AthkarDetailView: View {
                         .fill(Color.progressTrack(scheme))
 
                     RoundedRectangle(cornerRadius: 3)
-                        .fill(Color.green)
+                        .fill(Color.adaptiveAccent(scheme))
                         .frame(width: geo.size.width * CGFloat(currentIndex) / max(CGFloat(athkarList.count), 1))
                         .animation(.easeInOut, value: currentIndex)
                 }
@@ -111,7 +111,7 @@ struct AthkarDetailView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 24)
                 .padding(.horizontal, 16)
-                .background(Color.cardBackground(scheme))
+                .background(Color.readingSurface)
                 .clipShape(RoundedRectangle(cornerRadius: 24))
                 .overlay(
                     RoundedRectangle(cornerRadius: 24)
@@ -148,14 +148,14 @@ struct AthkarDetailView: View {
     private func virtueSection(_ virtue: String) -> some View {
         HStack(spacing: 10) {
             Image(systemName: "star.fill")
-                .foregroundColor(.yellow)
+                .foregroundColor(.prayerAccent)
             Text(virtue)
                 .font(.caption)
                 .foregroundColor(.adaptiveText(scheme))
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.yellow.opacity(scheme == .light ? 0.08 : 0.1))
+        .background(Color.prayerAccent.opacity(scheme == .light ? 0.12 : 0.10))
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
@@ -191,7 +191,7 @@ struct AthkarDetailView: View {
                     Circle()
                         .trim(from: 0, to: progress)
                         .stroke(
-                            isCompleted ? Color.green : Color.adaptiveAccent(scheme),
+                            isCompleted ? Color.adaptiveAccent(scheme) : Color.adaptiveAccent(scheme),
                             style: StrokeStyle(lineWidth: 8, lineCap: .round)
                         )
                         .frame(width: 120, height: 120)
@@ -203,7 +203,7 @@ struct AthkarDetailView: View {
                         if isCompleted {
                             Image(systemName: "checkmark")
                                 .font(.system(size: 36, weight: .bold))
-                                .foregroundColor(.green)
+                                .foregroundColor(.adaptiveAccent(scheme))
                         } else {
                             Text("\(counter)")
                                 .font(.system(size: 36, weight: .bold))

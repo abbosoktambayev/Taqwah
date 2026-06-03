@@ -17,19 +17,19 @@ struct ServicesView: View {
 
                         glassGroup {
                             VStack(spacing: 0) {
-                                serviceRow("Prayer Settings", "gearshape.fill", .green) {
+                                serviceRow("Prayer Settings", "gearshape.fill", .adaptiveAccent(scheme)) {
                                     PrayerSettingsView()
                                 }
                                 dividerLine
-                                serviceRow("Calendar", "calendar", .green) {
+                                serviceRow("Calendar", "calendar", .adaptiveAccent(scheme)) {
                                     IslamicCalendarView()
                                 }
                                 dividerLine
-                                serviceRow("Qibla Compass", "safari.fill", .green) {
+                                serviceRow("Qibla Compass", "safari.fill", .adaptiveAccent(scheme)) {
                                     QiblaView()
                                 }
                                 dividerLine
-                                serviceRow("Tasbih", "circle.hexagongrid.fill", .green) {
+                                serviceRow("Tasbih", "circle.hexagongrid.fill", .adaptiveAccent(scheme)) {
                                     TasbihView()
                                 }
                             }
@@ -40,15 +40,15 @@ struct ServicesView: View {
 
                         glassGroup {
                             VStack(spacing: 0) {
-                                serviceRow("Adhan Sound", "speaker.wave.2.fill", .green) {
+                                serviceRow("Adhan Sound", "speaker.wave.2.fill", .adaptiveAccent(scheme)) {
                                     AdhanSettingsView()
                                 }
                                 dividerLine
-                                serviceRow("Appearance", "paintpalette.fill", .green) {
+                                serviceRow("Appearance", "paintpalette.fill", .adaptiveAccent(scheme)) {
                                     AppearanceView()
                                 }
                                 dividerLine
-                                serviceRow("Language", "globe", .green) {
+                                serviceRow("Language", "globe", .adaptiveAccent(scheme)) {
                                     LanguageView()
                                 }
                             }
@@ -58,7 +58,7 @@ struct ServicesView: View {
                         sectionTitle("SUPPORT")
 
                         glassGroup {
-                            serviceRow("Support Taqwah", "heart.fill", .pink) {
+                            serviceRow("Support Taqwah", "heart.fill", .prayerAccent) {
                                 DonateView()
                             }
                         }
@@ -68,19 +68,19 @@ struct ServicesView: View {
 
                         glassGroup {
                             VStack(spacing: 0) {
-                                serviceRow("About App", "info.circle.fill", .gray) {
+                                serviceRow("About App", "info.circle.fill", .secondaryText(scheme)) {
                                     AboutView()
                                 }
                                 dividerLine
-                                serviceRow("Privacy Policy", "shield.lefthalf.filled", .gray) {
+                                serviceRow("Privacy Policy", "shield.lefthalf.filled", .secondaryText(scheme)) {
                                     PrivacyPolicyView()
                                 }
                                 dividerLine
-                                serviceRow("Terms of Use", "doc.text.fill", .gray) {
+                                serviceRow("Terms of Use", "doc.text.fill", .secondaryText(scheme)) {
                                     TermsView()
                                 }
                                 dividerLine
-                                serviceRow("Contact Support", "bubble.left.and.bubble.right.fill", .gray) {
+                                serviceRow("Contact Support", "bubble.left.and.bubble.right.fill", .secondaryText(scheme)) {
                                     SupportView()
                                 }
                             }
@@ -90,6 +90,7 @@ struct ServicesView: View {
                     }
                     .padding(.top, 8)
                 }
+                .safeAreaPadding(.bottom, 96)
             }
             .navigationTitle("Services")
             .navigationBarTitleDisplayMode(.large)
@@ -101,7 +102,7 @@ struct ServicesView: View {
 
     private func sectionTitle(_ text: String) -> some View {
         Text(LocalizedStringKey(text))
-            .font(.caption.weight(.semibold))
+            .font(.mono(11)).tracking(0.6)
             .foregroundColor(.sectionTitle(scheme))
             .padding(.horizontal)
     }

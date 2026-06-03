@@ -70,8 +70,9 @@ final class QiblaManager: NSObject, ObservableObject {
 extension QiblaManager: CLLocationManagerDelegate {
     nonisolated func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
         guard newHeading.headingAccuracy >= 0 else { return }
+        let measuredHeading = newHeading.trueHeading >= 0 ? newHeading.trueHeading : newHeading.magneticHeading
         Task { @MainActor in
-            self.heading = newHeading.magneticHeading
+            self.heading = measuredHeading
             self.hasHeading = true
         }
     }
@@ -136,7 +137,7 @@ struct QiblaView: View {
             // Degree display
             VStack(spacing: 4) {
                 Text("\(Int(manager.qiblaBearing))°")
-                    .font(.system(size: 56, weight: .thin, design: .rounded))
+                    .font(.brandDisplay(60))
                     .foregroundColor(.adaptiveText(scheme))
                 
                 Text("Qibla Direction")
@@ -241,7 +242,7 @@ struct QiblaView: View {
             } label: {
                 Text("Open Settings")
                     .font(.body.weight(.semibold))
-                    .foregroundColor(.white)
+                    .foregroundColor(.parchment)
                     .padding(.horizontal, 32)
                     .padding(.vertical, 14)
                     .background(

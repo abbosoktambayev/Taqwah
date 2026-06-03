@@ -14,6 +14,7 @@ final class CloudSyncManager {
     static let shared = CloudSyncManager()
 
     private let store = NSUbiquitousKeyValueStore.default
+    private var didStart = false
     private var isApplyingRemote = false
     private var pushWorkItem: DispatchWorkItem?
 
@@ -22,15 +23,20 @@ final class CloudSyncManager {
     private let athkarKey = "athkarProgress_data"
     private let stringKeys = ["selectedColorScheme", "calculationMethod"]
     private let intKeys = ["adjust_Fajr", "adjust_Sunrise", "adjust_Dhuhr",
-                           "adjust_Asr", "adjust_Maghrib", "adjust_Isha"]
+                           "adjust_Asr", "adjust_Maghrib", "adjust_Isha",
+                           "reminderMinutesBefore"]
     private let boolKeys = ["adhan_fajr", "adhan_dhuhr", "adhan_asr",
-                            "adhan_maghrib", "adhan_isha"]
+                            "adhan_maghrib", "adhan_isha",
+                            "hanafiAsr", "jummahReminder"]
 
     private init() {}
 
     // MARK: - Lifecycle
 
     func start() {
+        guard !didStart else { return }
+        didStart = true
+
         NotificationCenter.default.addObserver(
             self, selector: #selector(cloudChangedExternally(_:)),
             name: NSUbiquitousKeyValueStore.didChangeExternallyNotification,

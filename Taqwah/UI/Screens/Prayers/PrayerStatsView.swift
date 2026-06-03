@@ -51,13 +51,13 @@ struct PrayerStatsView: View {
                 value: "\(tracker.streak)",
                 label: "Current Streak",
                 icon: "flame.fill",
-                tint: .orange
+                tint: .prayerAccent
             )
             streakCard(
                 value: "\(tracker.bestStreak)",
                 label: "Best Streak",
                 icon: "trophy.fill",
-                tint: .yellow
+                tint: .adaptiveAccent(scheme)
             )
         }
         .padding(.horizontal)
@@ -70,7 +70,7 @@ struct PrayerStatsView: View {
                 .foregroundColor(tint)
 
             Text(value)
-                .font(.system(size: 34, weight: .bold))
+                .font(.brandDisplay(38))
                 .foregroundColor(.adaptiveText(scheme))
 
             Text(LocalizedStringKey(label))
@@ -153,7 +153,7 @@ struct PrayerStatsView: View {
                 Spacer()
                 Text("\(Int(rate * 100))%")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(.green)
+                    .foregroundColor(.adaptiveAccent(scheme))
             }
 
             GeometryReader { geo in
@@ -161,7 +161,7 @@ struct PrayerStatsView: View {
                     Capsule()
                         .fill(Color.progressTrack(scheme))
                     Capsule()
-                        .fill(Color.green)
+                        .fill(Color.adaptiveAccent(scheme))
                         .frame(width: geo.size.width * CGFloat(rate))
                 }
             }
@@ -292,7 +292,7 @@ struct PrayerStatsView: View {
 
     private func heatColor(_ count: Int) -> Color {
         guard count > 0 else { return Color.progressTrack(scheme) }
-        return Color.green.opacity(0.25 + 0.15 * Double(min(count, 5)))
+        return Color.adaptiveAccent(scheme).opacity(0.22 + 0.13 * Double(min(count, 5)))
     }
 
     // MARK: - Per-prayer Section

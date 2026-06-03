@@ -45,7 +45,8 @@ final class TasbihManager: ObservableObject {
     }
 
     var phrase: TasbihPhrase {
-        TasbihPhrase.presets[min(phraseIndex, TasbihPhrase.presets.count - 1)]
+        let index = min(max(phraseIndex, 0), TasbihPhrase.presets.count - 1)
+        return TasbihPhrase.presets[index]
     }
 
     var progress: CGFloat {
@@ -81,6 +82,6 @@ final class TasbihManager: ObservableObject {
     }
 
     func selectPhrase(_ index: Int) {
-        phraseIndex = index
+        phraseIndex = min(max(index, 0), TasbihPhrase.presets.count - 1)
     }
 }

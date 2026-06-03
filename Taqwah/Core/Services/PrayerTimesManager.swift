@@ -50,6 +50,7 @@ final class PrayerTimesManager: ObservableObject {
         // 1. Serve cached data instantly if available (works offline).
         if let cached = loadCache(year: year, latitude: latitude, longitude: longitude, method: method, hanafiAsr: hanafiAsr),
            !cached.isEmpty {
+            isLoading = false
             applyDays(cached)
         } else {
             allDays = []
@@ -74,6 +75,7 @@ final class PrayerTimesManager: ObservableObject {
                 self.isLoading = false
                 // Only surface an error if we have nothing to show (no cache).
                 if self.allDays.isEmpty {
+                    self.hasLoaded = false
                     self.errorMessage = error.localizedDescription
                 }
             }
@@ -108,9 +110,7 @@ final class PrayerTimesManager: ObservableObject {
         allDays = days
         let calendar = Calendar.current
         let today = Date()
-        if let found = days.first(where: { calendar.isDate($0.date, inSameDayAs: today) }) {
-            todayPrayer = found
-        }
+        todayPrayer = days.first { calendar.isDate($0.date, inSameDayAs: today) }
         // Refresh prayer-time notifications whenever the schedule changes.
         NotificationManager.shared.reschedule(using: days)
         // Publish a snapshot for the home/lock-screen widgets.

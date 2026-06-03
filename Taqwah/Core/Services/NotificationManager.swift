@@ -66,6 +66,9 @@ final class NotificationManager: ObservableObject {
     }
 
     private func rescheduleAsync(using days: [PrayerDay]) async {
+        let settings = await center.notificationSettings()
+        authorizationStatus = settings.authorizationStatus
+
         // 1. Clear our previously scheduled prayer notifications (leave any others alone).
         let pending = await center.pendingNotificationRequests()
         let staleIDs = pending.map(\.identifier).filter { $0.hasPrefix(identifierPrefix) }
@@ -73,7 +76,7 @@ final class NotificationManager: ObservableObject {
             center.removePendingNotificationRequests(withIdentifiers: staleIDs)
         }
 
-        guard authorizationStatus == .authorized || authorizationStatus == .provisional else { return }
+        guard settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional else { return }
 
         let enabled = enabledPrayers()
         guard !enabled.isEmpty, !days.isEmpty else { return }

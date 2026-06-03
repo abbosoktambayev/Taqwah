@@ -15,6 +15,7 @@ struct TaqwahApp: App {
             SplashView()
                 .environment(\.locale, localization.locale)
                 .preferredColorScheme(settings.colorScheme)
+                .dynamicTypeSize(...DynamicTypeSize.accessibility2)
                 .task {
                     CloudSyncManager.shared.start()
                 }

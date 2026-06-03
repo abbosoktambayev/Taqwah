@@ -125,7 +125,7 @@ struct SupportView: View {
     
     private func sectionLabel(_ text: String) -> some View {
         Text(LocalizedStringKey(text))
-            .font(.caption.weight(.semibold))
+            .font(.mono(11)).tracking(0.6)
             .foregroundColor(.sectionTitle(scheme))
             .padding(.horizontal)
     }

@@ -43,7 +43,7 @@ struct TasbihView: View {
                     } label: {
                         Text(phrase.transliteration)
                             .font(.subheadline.weight(.medium))
-                            .foregroundColor(isSelected ? .white : .secondaryText(scheme))
+                            .foregroundColor(isSelected ? .parchment : .secondaryText(scheme))
                             .padding(.horizontal, 16)
                             .padding(.vertical, 10)
                             .background(
@@ -93,7 +93,7 @@ struct TasbihView: View {
                         .padding(.horizontal, 24)
 
                     Text("\(tasbih.count)")
-                        .font(.system(size: 64, weight: .bold, design: .rounded))
+                        .font(.brandDisplay(68))
                         .foregroundColor(.adaptiveAccent(scheme))
                         .contentTransition(.numericText())
 
@@ -154,7 +154,7 @@ struct TasbihView: View {
                 } label: {
                     Text(value == 0 ? "∞" : "\(value)")
                         .font(.subheadline.weight(.semibold))
-                        .foregroundColor(isSelected ? .white : .secondaryText(scheme))
+                        .foregroundColor(isSelected ? .parchment : .secondaryText(scheme))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
                         .background(
@@ -175,7 +175,7 @@ struct TasbihView: View {
         HStack(spacing: 16) {
             Button {
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                withAnimation { tasbih.resetCount() }
+                withAnimation(Motion.standard) { tasbih.resetCount() }
             } label: {
                 Label("Reset count", systemImage: "arrow.counterclockwise")
                     .font(.subheadline.weight(.medium))
@@ -189,7 +189,7 @@ struct TasbihView: View {
 
             Button {
                 UINotificationFeedbackGenerator().notificationOccurred(.warning)
-                withAnimation { tasbih.resetAll() }
+                withAnimation(Motion.standard) { tasbih.resetAll() }
             } label: {
                 Label("Reset rounds", systemImage: "trash")
                     .font(.subheadline.weight(.medium))

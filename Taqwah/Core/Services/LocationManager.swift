@@ -1,6 +1,7 @@
 import Foundation
 import CoreLocation
 import Combine
+import MapKit
 
 @MainActor
 final class LocationManager: NSObject, ObservableObject {
@@ -18,13 +19,13 @@ final class LocationManager: NSObject, ObservableObject {
 
     /// Full display string: "Astana, Kazakhstan"
     var displayLocation: String {
-        "\(cityName), \(countryName)"
+        countryName.isEmpty ? cityName : "\(cityName), \(countryName)"
     }
 
     // MARK: - Private
 
     private let locationManager = CLLocationManager()
-    private let geocoder = CLGeocoder()
+    private var reverseGeocodingTask: Task<Void, Never>?
     private var hasResolvedOnce = false
 
     // MARK: - Init
@@ -62,21 +63,39 @@ final class LocationManager: NSObject, ObservableObject {
     }
 
     private func reverseGeocode(_ location: CLLocation) {
-        geocoder.reverseGeocodeLocation(location) { [weak self] placemarks, error in
-            Task { @MainActor in
-                guard let self = self else { return }
-
-                if let placemark = placemarks?.first {
-                    self.cityName = placemark.locality
-                        ?? placemark.administrativeArea
-                        ?? "Unknown"
-                    self.countryName = placemark.country ?? "Unknown"
-                }
-
+        reverseGeocodingTask?.cancel()
+        reverseGeocodingTask = Task { @MainActor [location] in
+            defer {
                 self.isLocating = false
                 self.hasResolvedOnce = true
+                self.reverseGeocodingTask = nil
+            }
+
+            guard let request = MKReverseGeocodingRequest(location: location) else { return }
+
+            do {
+                let mapItem = try await request.mapItems.first
+                guard !Task.isCancelled else { return }
+
+                let address = mapItem?.addressRepresentations
+                self.cityName = address?.cityName
+                    ?? address?.cityWithContext(.short)
+                    ?? mapItem?.address?.shortAddress
+                    ?? Self.coordinateName(for: location)
+                self.countryName = address?.regionName ?? ""
+            } catch {
+                self.cityName = Self.coordinateName(for: location)
+                self.countryName = ""
             }
         }
+    }
+
+    private static func coordinateName(for location: CLLocation) -> String {
+        String(
+            format: "%.2f, %.2f",
+            location.coordinate.latitude,
+            location.coordinate.longitude
+        )
     }
 }
 
@@ -105,7 +124,6 @@ extension LocationManager: CLLocationManagerDelegate {
             // Keep default Astana coordinates
             self.isLocating = false
             self.hasResolvedOnce = true
-            print("Location error: \(error.localizedDescription)")
         }
     }
 

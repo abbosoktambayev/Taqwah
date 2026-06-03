@@ -62,9 +62,9 @@ struct AthkarListView: View {
                 if !completedIndices.isEmpty {
                     HStack(spacing: 4) {
                         Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
+                            .foregroundColor(.adaptiveAccent(scheme))
                         Text("\(completedIndices.count)/\(athkarList.count) done")
-                            .foregroundColor(.green)
+                            .foregroundColor(.adaptiveAccent(scheme))
                     }
                     .font(.subheadline)
                 }
@@ -111,7 +111,7 @@ struct AthkarListView: View {
                     Text("\(index + 1)")
                         .font(.caption)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.parchment)
                         .frame(width: 26, height: 26)
                         .background(
                             Circle().fill(
@@ -135,21 +135,21 @@ struct AthkarListView: View {
                 HStack(spacing: 4) {
                     if isCompleted {
                         Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
+                            .foregroundColor(.adaptiveAccent(scheme))
                             .font(.system(size: 16))
                     }
 
                     Text("×\(dhikr.repetitions)")
                         .font(.caption)
                         .fontWeight(.bold)
-                        .foregroundColor(isCompleted ? .green : .white)
+                        .foregroundColor(isCompleted ? .adaptiveAccent(scheme) : .parchment)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
                         .background(
                             Capsule().fill(
                                 LinearGradient(
                                     colors: isCompleted
-                                        ? [Color.green.opacity(0.2), Color.green.opacity(0.2)]
+                                        ? [Color.adaptiveAccent(scheme).opacity(0.16), Color.adaptiveAccent(scheme).opacity(0.16)]
                                         : category.gradientColors,
                                     startPoint: .leading,
                                     endPoint: .trailing
@@ -183,10 +183,8 @@ struct AthkarListView: View {
                 RoundedRectangle(cornerRadius: 28)
                     .stroke(
                         isCompleted
-                            ? Color.green.opacity(0.3)
-                            : (scheme == .light
-                                ? Color(red: 200/255, green: 230/255, blue: 201/255).opacity(0.4)
-                                : Color.white.opacity(0.1)),
+                            ? Color.adaptiveAccent(scheme).opacity(0.3)
+                            : Color.cardBorder(scheme),
                         lineWidth: 1
                     )
             }
