@@ -4437,6 +4437,121 @@
           }
         }
       }
+    },
+    "APPLICATION": {
+      "extractionState": "manual",
+      "localizations": {
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ҚОЛДАНБА"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПРИЛОЖЕНИЕ"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ILOVA"
+          }
+        }
+      }
+    },
+    "Day Rhythm": {
+      "extractionState": "manual",
+      "localizations": {
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Күн ырғағы"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ритм дня"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kun ritmi"
+          }
+        }
+      }
+    },
+    "Dismiss": {
+      "extractionState": "manual",
+      "localizations": {
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Жабу"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закрыть"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yopish"
+          }
+        }
+      }
+    },
+    "Sharing Taqwah?": {
+      "extractionState": "manual",
+      "localizations": {
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taqwah-пен бөлісесіз бе?"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Делитесь Taqwah?"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taqwah bilan bo‘lishyapsizmi?"
+          }
+        }
+      }
+    },
+    "Tag @abbos.dev": {
+      "extractionState": "manual",
+      "localizations": {
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "@abbos.dev аккаунтын белгілеңіз"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отметьте @abbos.dev"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "@abbos.dev ni belgilang"
+          }
+        }
+      }
     }
   },
   "version": "1.1"

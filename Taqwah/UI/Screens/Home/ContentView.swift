@@ -37,6 +37,7 @@ struct ContentView: View {
         }
         .tint(.adaptiveAccent(scheme))
         .id(localization.languageCode)
+        .screenshotSharePrompt()
     }
 }
 

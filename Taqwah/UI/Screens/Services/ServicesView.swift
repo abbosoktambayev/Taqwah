@@ -2,7 +2,6 @@ import SwiftUI
 
 struct ServicesView: View {
     @Environment(\.colorScheme) private var scheme
-    @StateObject private var localization = LocalizationManager.shared
 
     var body: some View {
         NavigationStack {
@@ -12,12 +11,8 @@ struct ServicesView: View {
 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 24) {
-
-                        // MARK: - PRAYER TOOLS
-                        sectionTitle("PRAYER TOOLS")
-
-                        glassGroup {
-                            VStack(spacing: 0) {
+                        settingsSection("PRAYER TOOLS") {
+                            settingsGroup {
                                 serviceRow("Prayer Settings", "gearshape.fill", .adaptiveAccent(scheme)) {
                                     PrayerSettingsView()
                                 }
@@ -36,11 +31,8 @@ struct ServicesView: View {
                             }
                         }
 
-                        // MARK: - APP SETTINGS
-                        sectionTitle("APP SETTINGS")
-
-                        glassGroup {
-                            VStack(spacing: 0) {
+                        settingsSection("APPLICATION") {
+                            settingsGroup {
                                 serviceRow("Adhan Sound", "speaker.wave.2.fill", .adaptiveAccent(scheme)) {
                                     AdhanSettingsView()
                                 }
@@ -55,34 +47,26 @@ struct ServicesView: View {
                             }
                         }
 
-                        // MARK: - SUPPORT
-                        sectionTitle("SUPPORT")
-
-                        glassGroup {
-                            serviceRow("Support Taqwah", "heart.fill", .prayerAccent) {
-                                DonateView()
-                            }
-                        }
-
-                        // MARK: - INFORMATION
-                        sectionTitle("INFORMATION")
-
-                        glassGroup {
-                            VStack(spacing: 0) {
-                                serviceRow("About App", "info.circle.fill", .secondaryText(scheme)) {
+                        settingsSection("SUPPORT") {
+                            settingsGroup {
+                                serviceRow("Support Taqwah", "heart.fill", .prayerAccent) {
+                                    DonateView()
+                                }
+                                dividerLine
+                                serviceRow("About App", "info.circle.fill", .adaptiveAccent(scheme)) {
                                     AboutView()
                                 }
                                 dividerLine
-                                serviceRow("Privacy Policy", "shield.lefthalf.filled", .secondaryText(scheme)) {
+                                serviceRow("Contact Support", "bubble.left.and.bubble.right.fill", .adaptiveAccent(scheme)) {
+                                    SupportView()
+                                }
+                                dividerLine
+                                serviceRow("Privacy Policy", "shield.lefthalf.filled", .adaptiveAccent(scheme)) {
                                     PrivacyPolicyView()
                                 }
                                 dividerLine
-                                serviceRow("Terms of Use", "doc.text.fill", .secondaryText(scheme)) {
+                                serviceRow("Terms of Use", "doc.text.fill", .adaptiveAccent(scheme)) {
                                     TermsView()
-                                }
-                                dividerLine
-                                serviceRow("Contact Support", "bubble.left.and.bubble.right.fill", .secondaryText(scheme)) {
-                                    SupportView()
                                 }
                             }
                         }
@@ -93,38 +77,42 @@ struct ServicesView: View {
                 }
                 .safeAreaPadding(.bottom, 96)
             }
-            .navigationTitle(localization.localized("Services"))
+            .navigationTitle("Services")
             .navigationBarTitleDisplayMode(.large)
             .foregroundColor(.adaptiveText(scheme))
         }
     }
 
-    // MARK: - Components (moved inside struct)
+    // MARK: - Components
+
+    private func settingsSection<Content: View>(
+        _ title: String,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            sectionTitle(title)
+            content()
+        }
+    }
 
     private func sectionTitle(_ text: String) -> some View {
         Text(LocalizedStringKey(text))
             .font(.mono(11)).tracking(0.6)
             .foregroundColor(.sectionTitle(scheme))
-            .padding(.horizontal)
+            .padding(.horizontal, 24)
     }
 
-    private func glassGroup(@ViewBuilder content: () -> some View) -> some View {
+    private func settingsGroup(@ViewBuilder content: () -> some View) -> some View {
         VStack(spacing: 0) {
             content()
         }
-        .padding(16)
         .background(
-            RoundedRectangle(cornerRadius: 26)
-                .fill(Color.glassFill(scheme))
+            RoundedRectangle(cornerRadius: 22)
+                .fill(Color.cardBackground(scheme))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 26)
-                .stroke(Color.glassBorder(scheme), lineWidth: 1)
-        )
-        .shadow(
-            color: Color.black.opacity(scheme == .light ? 0.06 : 0.35),
-            radius: scheme == .light ? 10 : 20,
-            y: scheme == .light ? 4 : 10
+            RoundedRectangle(cornerRadius: 22)
+                .stroke(Color.cardBorder(scheme), lineWidth: 1)
         )
         .padding(.horizontal)
     }
@@ -133,7 +121,8 @@ struct ServicesView: View {
         Rectangle()
             .fill(Color.dividerColor(scheme))
             .frame(height: 1)
-            .padding(.vertical, 6)
+            .padding(.leading, 64)
+            .padding(.trailing, 16)
     }
 
     private func serviceRow<Destination: View>(
@@ -143,10 +132,15 @@ struct ServicesView: View {
         destination: @escaping () -> Destination
     ) -> some View {
         NavigationLink(destination: destination) {
-            HStack(spacing: 16) {
+            HStack(spacing: 12) {
                 Image(systemName: icon)
-                    .font(.system(size: 20))
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(tint)
+                    .frame(width: 34, height: 34)
+                    .background(
+                        RoundedRectangle(cornerRadius: 9)
+                            .fill(tint.opacity(scheme == .light ? 0.10 : 0.16))
+                    )
 
                 Text(LocalizedStringKey(title))
                     .font(.system(size: 17))
@@ -155,9 +149,11 @@ struct ServicesView: View {
                 Spacer()
 
                 Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
                     .foregroundColor(.secondaryText(scheme))
             }
-            .padding(.vertical, 10)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)

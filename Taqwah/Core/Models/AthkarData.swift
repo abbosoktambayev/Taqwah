@@ -41,38 +41,38 @@ enum AthkarCategory: String, CaseIterable, Identifiable {
         switch self {
         case .morning:
             return [
-                .mutedEmerald,
-                .warmGold
+                .mutedEmerald.opacity(0.9),
+                .warmGold.opacity(0.78)
             ]
         case .evening:
             return [
-                .obsidian,
-                .warmGold
+                .brandDeep.opacity(0.86),
+                .warmGold.opacity(0.72)
             ]
         case .afterPrayer:
             return [
-                .mutedEmerald,
-                .deepElevated
+                .mutedEmerald.opacity(0.9),
+                .brandDeep.opacity(0.78)
             ]
         case .sleep:
             return [
-                .deepElevated,
-                .obsidian
+                .brandDeep.opacity(0.86),
+                .mutedEmerald.opacity(0.58)
             ]
         case .waking:
             return [
-                .warmGold,
-                .mutedEmerald
+                .warmGold.opacity(0.8),
+                .mutedEmerald.opacity(0.82)
             ]
         case .food:
             return [
-                .mutedEmerald,
-                .obsidian
+                .mutedEmerald.opacity(0.84),
+                .brandDeep.opacity(0.76)
             ]
         case .travel:
             return [
-                .deepElevated,
-                .mutedEmerald
+                .brandDeep.opacity(0.82),
+                .mutedEmerald.opacity(0.78)
             ]
         }
     }

@@ -330,13 +330,36 @@ struct PrayersView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.72)
             }
-            .foregroundColor(isSelected ? .parchment : .adaptiveAccent(scheme))
+            .foregroundColor(optionTextColor(isSelected: isSelected))
             .frame(maxWidth: .infinity)
             .frame(height: 36)
-            .background(isSelected ? Color.adaptiveAccent(scheme) : Color.brandDim)
+            .background(optionBackground(isSelected: isSelected))
             .clipShape(RoundedRectangle(cornerRadius: 12))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(
+                        isSelected ? Color.clear : Color.adaptiveAccent(scheme).opacity(scheme == .light ? 0.10 : 0.14),
+                        lineWidth: 1
+                    )
+            )
         }
         .buttonStyle(.plain)
+    }
+
+    private func optionBackground(isSelected: Bool) -> Color {
+        if isSelected {
+            return Color.adaptiveAccent(scheme)
+        }
+
+        return Color.adaptiveAccent(scheme).opacity(scheme == .light ? 0.07 : 0.12)
+    }
+
+    private func optionTextColor(isSelected: Bool) -> Color {
+        if isSelected {
+            return Color.parchment
+        }
+
+        return Color.adaptiveAccent(scheme).opacity(scheme == .light ? 0.68 : 0.74)
     }
 
     private func progressBar(progress: CGFloat, height: CGFloat) -> some View {

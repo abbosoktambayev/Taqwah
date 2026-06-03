@@ -208,7 +208,7 @@ struct HomeView: View {
         } else if manager.todayPrayer != nil {
             let p = flowPresentation(flowKind)
             rhythmSurface {
-                VStack(alignment: .leading, spacing: 22) {
+                VStack(alignment: .leading, spacing: 16) {
                     HStack(alignment: .top, spacing: 16) {
                         VStack(alignment: .leading, spacing: 6) {
                             Text("NOW")
@@ -260,7 +260,7 @@ struct HomeView: View {
                         }
 
                         Text(remainingTime)
-                            .font(.brandDisplay(58))
+                            .font(.brandDisplay(54))
                             .foregroundColor(.prayerAccent)
                             .lineLimit(1)
                             .minimumScaleFactor(0.72)
@@ -288,7 +288,8 @@ struct HomeView: View {
 
     private func rhythmSurface<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         content()
-            .padding(22)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(RoundedRectangle(cornerRadius: 28).fill(Color.cardBackground(scheme)))
             .overlay(RoundedRectangle(cornerRadius: 28).stroke(Color.cardBorder(scheme), lineWidth: 1))
@@ -301,7 +302,7 @@ struct HomeView: View {
             let events = prayer.salahEvents()
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
-                    Text("Prayer Rhythm")
+                    Text("Day Rhythm")
                         .font(.headline)
                         .foregroundColor(.adaptiveText(scheme))
 
@@ -332,19 +333,24 @@ struct HomeView: View {
 
     private func timelineBar(events: [PrayerEvent]) -> some View {
         GeometryReader { geo in
-            let width = max(geo.size.width - 10, 1)
+            let count = max(events.count, 1)
+            let slotWidth = geo.size.width / CGFloat(count)
+            let firstX = slotWidth / 2
+            let trackWidth = max(geo.size.width - slotWidth, 1)
             let progress = timelineProgress(events: events)
+            let progressWidth = trackWidth * progress
+            let currentX = firstX + progressWidth
 
             ZStack(alignment: .leading) {
                 Capsule()
                     .fill(Color.progressTrack(scheme))
-                    .frame(height: 6)
-                    .position(x: geo.size.width / 2, y: 12)
+                    .frame(width: trackWidth, height: 6)
+                    .position(x: firstX + trackWidth / 2, y: 12)
 
                 Capsule()
                     .fill(Color.prayerAccent)
-                    .frame(width: width * progress, height: 6)
-                    .position(x: 5 + (width * progress / 2), y: 12)
+                    .frame(width: progressWidth, height: 6)
+                    .position(x: firstX + progressWidth / 2, y: 12)
                     .animation(.easeInOut(duration: 0.35), value: progress)
 
                 ForEach(Array(events.enumerated()), id: \.element.name) { index, event in
@@ -355,7 +361,7 @@ struct HomeView: View {
                             Circle()
                                 .stroke(Color.cardBackground(scheme), lineWidth: 3)
                         )
-                        .position(x: 5 + width * eventPosition(index: index, count: events.count), y: 12)
+                        .position(x: timelineNodeX(index: index, slotWidth: slotWidth), y: 12)
                 }
 
                 Circle()
@@ -366,10 +372,14 @@ struct HomeView: View {
                             .stroke(Color.cardBackground(scheme), lineWidth: 3)
                     )
                     .shadow(color: .accentShadow(scheme), radius: 8, y: 3)
-                    .position(x: 5 + width * progress, y: 12)
+                    .position(x: currentX, y: 12)
             }
         }
         .frame(height: 24)
+    }
+
+    private func timelineNodeX(index: Int, slotWidth: CGFloat) -> CGFloat {
+        slotWidth * (CGFloat(index) + 0.5)
     }
 
     private func timelineLabels(events: [PrayerEvent]) -> some View {
@@ -416,11 +426,6 @@ struct HomeView: View {
         }
 
         return 0
-    }
-
-    private func eventPosition(index: Int, count: Int) -> CGFloat {
-        guard count > 1 else { return 0 }
-        return CGFloat(index) / CGFloat(count - 1)
     }
 
     private func timelineNodeColor(_ event: PrayerEvent, now: Date = Date()) -> Color {
