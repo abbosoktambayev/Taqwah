@@ -301,7 +301,7 @@ struct HomeView: View {
             let events = prayer.salahEvents()
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
-                    Text("Prayer Timeline")
+                    Text("Prayer Rhythm")
                         .font(.headline)
                         .foregroundColor(.adaptiveText(scheme))
 
@@ -347,7 +347,7 @@ struct HomeView: View {
                     .position(x: 5 + (width * progress / 2), y: 12)
                     .animation(.easeInOut(duration: 0.35), value: progress)
 
-                ForEach(events, id: \.name) { event in
+                ForEach(Array(events.enumerated()), id: \.element.name) { index, event in
                     Circle()
                         .fill(timelineNodeColor(event))
                         .frame(width: 13, height: 13)
@@ -355,7 +355,7 @@ struct HomeView: View {
                             Circle()
                                 .stroke(Color.cardBackground(scheme), lineWidth: 3)
                         )
-                        .position(x: 5 + width * eventPosition(event, in: events), y: 12)
+                        .position(x: 5 + width * eventPosition(index: index, count: events.count), y: 12)
                 }
 
                 Circle()
@@ -394,23 +394,37 @@ struct HomeView: View {
     }
 
     private func timelineProgress(events: [PrayerEvent], now: Date = Date()) -> CGFloat {
-        guard let start = events.first?.date, let end = events.last?.date, end > start else {
+        guard events.count > 1 else {
             return 0
         }
-        let raw = now.timeIntervalSince(start) / end.timeIntervalSince(start)
-        return CGFloat(min(max(raw, 0), 1))
+
+        if now <= events[0].date {
+            return 0
+        }
+        if let last = events.last, now >= last.date {
+            return 1
+        }
+
+        for index in 0..<(events.count - 1) {
+            let start = events[index].date
+            let end = events[index + 1].date
+            guard now >= start, now <= end, end > start else { continue }
+
+            let segment = now.timeIntervalSince(start) / end.timeIntervalSince(start)
+            let sequencePosition = (Double(index) + segment) / Double(events.count - 1)
+            return CGFloat(min(max(sequencePosition, 0), 1))
+        }
+
+        return 0
     }
 
-    private func eventPosition(_ event: PrayerEvent, in events: [PrayerEvent]) -> CGFloat {
-        guard let start = events.first?.date, let end = events.last?.date, end > start else {
-            return 0
-        }
-        let raw = event.date.timeIntervalSince(start) / end.timeIntervalSince(start)
-        return CGFloat(min(max(raw, 0), 1))
+    private func eventPosition(index: Int, count: Int) -> CGFloat {
+        guard count > 1 else { return 0 }
+        return CGFloat(index) / CGFloat(count - 1)
     }
 
     private func timelineNodeColor(_ event: PrayerEvent, now: Date = Date()) -> Color {
-        if event.name == nextPrayerName || (nextIsSunrise && event.name == "Fajr") {
+        if event.name == upcomingSalahName(now: now) {
             return .prayerAccent
         }
         if event.date < now {
@@ -420,13 +434,17 @@ struct HomeView: View {
     }
 
     private func timelineLabelColor(_ event: PrayerEvent, now: Date = Date()) -> Color {
-        if event.name == nextPrayerName || (nextIsSunrise && event.name == "Fajr") {
+        if event.name == upcomingSalahName(now: now) {
             return .prayerAccent
         }
         if event.date < now {
             return .adaptiveAccent(scheme)
         }
         return .secondaryText(scheme)
+    }
+
+    private func upcomingSalahName(now: Date = Date()) -> String? {
+        manager.todayPrayer?.salahEvents().first { $0.date >= now }?.name
     }
 
     @ViewBuilder

@@ -4415,6 +4415,28 @@
           }
         }
       }
+    },
+    "Prayer Rhythm": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ритм молитв"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Намаз ырғағы"
+          }
+        },
+        "uz": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Namoz ritmi"
+          }
+        }
+      }
     }
   },
   "version": "1.1"
