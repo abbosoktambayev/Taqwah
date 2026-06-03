@@ -4,12 +4,21 @@ import Combine
 /// Syncs the app's small data (prayer tracker, athkar progress, settings) across
 /// the user's devices via iCloud Key-Value storage — no login screen required.
 ///
-/// Strategy:
+/// Requires the iCloud key-value-store entitlement AND the user being signed into
+/// iCloud. When either is missing (e.g. a free developer account, or signed-out
+/// device), `NSUbiquitousKeyValueStore.synchronize()` returns `false`; in that
+/// case sync stays OFF and the app runs fully on-device — nothing is claimed or
+/// broken.
+///
+/// Strategy when available:
 /// - Dictionary stores (tracker, athkar) are **union-merged** to avoid data loss.
 /// - Scalar settings take the cloud value when present (so a new device adopts them).
 /// - Local UserDefaults changes are pushed to iCloud (debounced).
 @MainActor
 final class CloudSyncManager {
+
+    /// Whether the iCloud KV store is actually usable (entitlement + signed in).
+    private(set) var isAvailable = false
 
     static let shared = CloudSyncManager()
 
@@ -37,6 +46,12 @@ final class CloudSyncManager {
         guard !didStart else { return }
         didStart = true
 
+        // `synchronize()` returns false when the iCloud KV entitlement is absent
+        // or the user isn't signed into iCloud. Don't register observers or claim
+        // to sync in that case — the app works fully on-device.
+        isAvailable = store.synchronize()
+        guard isAvailable else { return }
+
         NotificationCenter.default.addObserver(
             self, selector: #selector(cloudChangedExternally(_:)),
             name: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
@@ -48,7 +63,6 @@ final class CloudSyncManager {
             object: nil
         )
 
-        store.synchronize()
         pullFromCloud()   // adopt cloud data on launch (merged)
         pushToCloud()     // ensure cloud has our latest too
     }

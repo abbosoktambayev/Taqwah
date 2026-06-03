@@ -65,8 +65,9 @@ Taqwah is a polished, ad‑free Islamic companion app focused on Central Asia (K
 | **Sync** | **NSUbiquitousKeyValueStore** (iCloud), no login required |
 | **Notifications** | `UNUserNotificationCenter` calendar triggers |
 | **Location** | `CoreLocation` for city + Qibla heading |
-| **Localization** | **String Catalog** (`.xcstrings`) + runtime locale switching |
-| **Fonts** | Bundled **Amiri Quran** registered at runtime via Core Text |
+| **Localization** | **String Catalog** (`.xcstrings`) + runtime locale switching (EN/RU/KK/UZ) |
+| **Design system** | Abbos Design System (ADS): warm obsidian/parchment palette, gold + emerald accents |
+| **Fonts** | Bundled **Cormorant Garamond** (editorial serif), **IBM Plex Mono** & **DM Mono** (metadata), **Amiri Quran** (Arabic) — registered at runtime via Core Text, Dynamic Type aware |
 
 ### Architecture
 ```
@@ -79,7 +80,7 @@ Taqwah/
 ├── UI/
 │   ├── Screens/       # Home, Prayers, Athkar, Services + settings
 │   └── Components/    # Shared views (background, splash)
-└── Resources/Fonts/   # Amiri Quran
+└── Resources/Fonts/   # Cormorant Garamond, IBM Plex Mono, DM Mono, Amiri Quran
 TaqwahWidget/          # WidgetKit extension
 ```
 

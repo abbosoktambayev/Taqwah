@@ -1,6 +1,7 @@
 import Foundation
 import UserNotifications
 import Combine
+import UIKit
 
 @MainActor
 final class NotificationManager: ObservableObject {
@@ -12,10 +13,38 @@ final class NotificationManager: ObservableObject {
     private let center = UNUserNotificationCenter.current()
 
     /// iOS allows at most 64 pending local notifications; stay safely below.
+    /// With reminders this covers ~6 days, so we re-extend the window on every
+    /// app activation and at each day change (see `beginAutoRenewal`).
     private let maxPending = 60
     private let identifierPrefix = "prayer."
+    private var didBeginRenewal = false
 
     private init() {}
+
+    // MARK: - Auto-renewal
+
+    /// Keep the rolling notification window fresh: reschedule whenever the app
+    /// becomes active or the calendar day rolls over. Because the 60-slot window
+    /// only spans ~6 days, this effectively extends coverage from each app open.
+    func beginAutoRenewal() {
+        guard !didBeginRenewal else { return }
+        didBeginRenewal = true
+
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(renew),
+            name: UIApplication.didBecomeActiveNotification, object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(renew),
+            name: .NSCalendarDayChanged, object: nil
+        )
+    }
+
+    @objc private func renew() {
+        let days = PrayerTimesManager.shared.allDays
+        guard !days.isEmpty else { return }
+        reschedule(using: days)
+    }
 
     // MARK: - Authorization
 

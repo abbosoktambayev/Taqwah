@@ -58,14 +58,26 @@ final class PrayerTimesManager: ObservableObject {
             isLoading = true
         }
 
+        // In December, also load next year so tomorrow's Fajr and notifications
+        // survive the year boundary (the API is queried per calendar year).
+        let needsNextYear = Calendar.current.component(.month, from: Date()) == 12
+
         // 2. Refresh from the network.
         loadTask?.cancel()
         loadTask = Task { [weak self] in
             guard let self else { return }
             do {
-                let full = try await self.fetchWithFallback(
+                var full = try await self.fetchWithFallback(
                     year: year, latitude: latitude, longitude: longitude, method: method, hanafiAsr: hanafiAsr
                 )
+                if needsNextYear {
+                    if let nextYear = try? await self.fetchWithFallback(
+                        year: year + 1, latitude: latitude, longitude: longitude, method: method, hanafiAsr: hanafiAsr
+                    ) {
+                        full.append(contentsOf: nextYear)
+                        full.sort { $0.date < $1.date }
+                    }
+                }
                 if Task.isCancelled { return }
                 self.applyDays(full)
                 self.isLoading = false

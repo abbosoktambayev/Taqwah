@@ -9,6 +9,7 @@ struct HomeView: View {
     @State private var nextPrayerName: String = "Loading..."
     @State private var remainingTime: String = ""
     @State private var nextPrayerTime: String = ""
+    @State private var nextIsSunrise: Bool = false
     @State private var countdownTimer: DispatchSourceTimer?
 
     // Identifier for tracking changes
@@ -129,7 +130,7 @@ struct HomeView: View {
 
     private var nextPrayerSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Next Prayer")
+            Text(nextIsSunrise ? "Up Next" : "Next Prayer")
                 .font(.title2)
                 .bold()
                 .foregroundColor(.adaptiveText(scheme))
@@ -152,6 +153,13 @@ struct HomeView: View {
                 Text("at \(nextPrayerTime)")
                     .foregroundColor(.secondaryText(scheme))
                     .padding(.top, 6)
+
+                // Sunrise is the end of the Fajr window, not a salah — clarify it.
+                if nextIsSunrise {
+                    Text("Fajr ends at sunrise")
+                        .font(.caption)
+                        .foregroundColor(.ter)
+                }
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 36)
@@ -288,6 +296,7 @@ struct HomeView: View {
 
         nextPrayerName = nextName
         nextPrayerTime = nextTimeStr
+        nextIsSunrise = (nextName == "Sunrise")
     }
 }
 

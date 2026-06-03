@@ -18,6 +18,7 @@ struct TaqwahApp: App {
                 .dynamicTypeSize(...DynamicTypeSize.accessibility2)
                 .task {
                     CloudSyncManager.shared.start()
+                    NotificationManager.shared.beginAutoRenewal()
                 }
                 .onOpenURL { url in
                     AppRouter.shared.handle(url)
