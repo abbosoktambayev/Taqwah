@@ -5,6 +5,7 @@ struct AthkarDetailView: View {
     let startIndex: Int
     @Binding var completedIndices: Set<Int>
     @Environment(\.colorScheme) private var scheme
+    @StateObject private var favorites = AthkarFavoritesManager.shared
 
     @State private var currentIndex: Int = 0
     @State private var counter: Int = 0
@@ -56,6 +57,20 @@ struct AthkarDetailView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    withAnimation(Motion.standard) {
+                        favorites.toggle(currentDhikr)
+                    }
+                } label: {
+                    Image(systemName: favorites.isFavorite(currentDhikr) ? "star.fill" : "star")
+                        .foregroundColor(favorites.isFavorite(currentDhikr) ? .prayerAccent : .adaptiveAccent(scheme))
+                }
+                .accessibilityLabel(favorites.isFavorite(currentDhikr) ? "Remove from Favorites" : "Add to Favorites")
+            }
+        }
         .foregroundColor(.adaptiveText(scheme))
         .onAppear {
             currentIndex = startIndex

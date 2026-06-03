@@ -35,4 +35,15 @@ final class LocalizationManager: ObservableObject {
         guard Self.available.contains(code) else { return }
         languageCode = code
     }
+
+    func localized(_ key: String) -> String {
+        guard languageCode != "en",
+              let path = Bundle.main.path(forResource: languageCode, ofType: "lproj"),
+              let bundle = Bundle(path: path)
+        else {
+            return key
+        }
+
+        return bundle.localizedString(forKey: key, value: key, table: nil)
+    }
 }

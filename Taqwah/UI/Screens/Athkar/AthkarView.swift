@@ -3,6 +3,7 @@ import SwiftUI
 struct AthkarView: View {
 
     @Environment(\.colorScheme) private var scheme
+    @StateObject private var favorites = AthkarFavoritesManager.shared
 
     private let columns = [
         GridItem(.flexible(), spacing: 16, alignment: .top),
@@ -32,14 +33,16 @@ struct AthkarView: View {
                         }
                         .padding(.horizontal)
 
-                        // Favorites (coming soon)
-                        Text("Coming Soon")
+                        Text("FAVORITES")
                             .font(.caption.weight(.semibold))
                             .foregroundColor(.sectionTitle(scheme))
                             .padding(.horizontal)
 
-                        favoritesCard
-                            .padding(.horizontal)
+                        NavigationLink(destination: AthkarFavoritesView()) {
+                            favoritesCard
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.horizontal)
 
                         Spacer(minLength: 24)
                     }
@@ -110,12 +113,16 @@ struct AthkarView: View {
                 Text("Favorites")
                     .font(.headline)
                     .foregroundColor(.adaptiveText(scheme))
-                Text("No favorites yet")
+                Text(favorites.favoriteIDs.isEmpty ? "No favorites yet" : "\(favorites.favoriteIDs.count) saved")
                     .font(.subheadline)
                     .foregroundColor(.secondaryText(scheme))
             }
 
             Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.caption.weight(.semibold))
+                .foregroundColor(.secondaryText(scheme))
         }
         .padding()
         .background(Color.cardBackground(scheme))

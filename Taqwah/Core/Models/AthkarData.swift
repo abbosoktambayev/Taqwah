@@ -94,6 +94,10 @@ struct Dhikr: Identifiable {
     let source: String
     let virtue: String?
     let category: AthkarCategory
+
+    var stableID: String {
+        "\(category.rawValue)|\(title)|\(source)"
+    }
 }
 
 // MARK: - Dhikr Extension

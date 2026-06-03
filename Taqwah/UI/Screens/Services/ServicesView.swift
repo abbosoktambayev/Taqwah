@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ServicesView: View {
     @Environment(\.colorScheme) private var scheme
+    @StateObject private var localization = LocalizationManager.shared
 
     var body: some View {
         NavigationStack {
@@ -92,7 +93,7 @@ struct ServicesView: View {
                 }
                 .safeAreaPadding(.bottom, 96)
             }
-            .navigationTitle("Services")
+            .navigationTitle(localization.localized("Services"))
             .navigationBarTitleDisplayMode(.large)
             .foregroundColor(.adaptiveText(scheme))
         }

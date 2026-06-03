@@ -4,6 +4,7 @@ struct AthkarListView: View {
     let category: AthkarCategory
     @Environment(\.colorScheme) private var scheme
     @StateObject private var progress = AthkarProgressManager.shared
+    @StateObject private var favorites = AthkarFavoritesManager.shared
 
     private var completedIndices: Set<Int> {
         progress.completed(for: category)
@@ -103,6 +104,7 @@ struct AthkarListView: View {
 
     private func dhikrCard(_ dhikr: Dhikr, index: Int) -> some View {
         let isCompleted = completedIndices.contains(index)
+        let isFavorite = favorites.isFavorite(dhikr)
 
         return VStack(alignment: .leading, spacing: 12) {
             // Top row: title + repetition badge
@@ -133,6 +135,12 @@ struct AthkarListView: View {
                 Spacer()
 
                 HStack(spacing: 4) {
+                    if isFavorite {
+                        Image(systemName: "star.fill")
+                            .foregroundColor(.prayerAccent)
+                            .font(.system(size: 14))
+                    }
+
                     if isCompleted {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.adaptiveAccent(scheme))

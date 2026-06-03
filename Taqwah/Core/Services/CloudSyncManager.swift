@@ -30,6 +30,7 @@ final class CloudSyncManager {
     // Keys mirrored to iCloud.
     private let trackerKey = "prayerTracker_v2"
     private let athkarKey = "athkarProgress_data"
+    private let favoritesKey = "athkarFavorites_v1"
     private let stringKeys = ["selectedColorScheme", "calculationMethod"]
     private let intKeys = ["adjust_Fajr", "adjust_Sunrise", "adjust_Dhuhr",
                            "adjust_Asr", "adjust_Maghrib", "adjust_Isha",
@@ -95,10 +96,12 @@ final class CloudSyncManager {
         // Dictionary stores: union-merge.
         mergeTracker(defaults: defaults)
         mergeAthkar(defaults: defaults)
+        mergeFavorites(defaults: defaults)
 
         // Tell the in-memory managers to refresh from the updated store.
         PrayerTrackerManager.shared.reloadFromStore()
         AthkarProgressManager.shared.reloadFromStore()
+        AthkarFavoritesManager.shared.reloadFromStore()
         SettingsManager.shared.reloadFromStore()
     }
 
@@ -133,6 +136,16 @@ final class CloudSyncManager {
         }
     }
 
+    private func mergeFavorites(defaults: UserDefaults) {
+        let local = Set(defaults.stringArray(forKey: favoritesKey) ?? [])
+        let cloud = Set(store.array(forKey: favoritesKey) as? [String] ?? [])
+        guard !cloud.isEmpty else { return }
+
+        let merged = local.union(cloud).sorted()
+        defaults.set(merged, forKey: favoritesKey)
+        store.set(merged, forKey: favoritesKey)
+    }
+
     // MARK: - Push (local → cloud)
 
     @objc private func localDefaultsChanged() {
@@ -160,6 +173,7 @@ final class CloudSyncManager {
         }
         if let data = defaults.data(forKey: trackerKey) { store.set(data, forKey: trackerKey) }
         if let data = defaults.data(forKey: athkarKey) { store.set(data, forKey: athkarKey) }
+        if let favorites = defaults.stringArray(forKey: favoritesKey) { store.set(favorites, forKey: favoritesKey) }
 
         store.synchronize()
     }

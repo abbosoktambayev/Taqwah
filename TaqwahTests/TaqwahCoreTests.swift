@@ -2,6 +2,7 @@ import XCTest
 @testable import Taqwah
 
 /// Unit tests for the pure prayer-time and tracker core logic.
+@MainActor
 final class TaqwahCoreTests: XCTestCase {
 
     private let calendar = Calendar.current
@@ -126,6 +127,15 @@ final class TaqwahCoreTests: XCTestCase {
         for type in PrayerCompletion.allCases {
             XCTAssertEqual(PrayerCompletion(rawValue: type.rawValue), type)
         }
+    }
+
+    // MARK: - Athkar favorites identity
+
+    func testDhikrStableIDsAreUniqueAcrossCategories() {
+        let ids = AthkarCategory.allCases.flatMap { category in
+            category.athkar.map(\.stableID)
+        }
+        XCTAssertEqual(Set(ids).count, ids.count)
     }
 
     // MARK: - CalculationMethod provider mapping

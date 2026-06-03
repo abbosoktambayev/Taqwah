@@ -10,28 +10,28 @@ struct ContentView: View {
             HomeView()
                 .tabItem {
                     Image(systemName: "house")
-                    Text("Home")
+                    Text(verbatim: localization.localized("Home"))
                 }
                 .tag(AppTab.home)
 
             PrayersView()
                 .tabItem {
                     Image(systemName: "checkmark.circle")
-                    Text("Prayers")
+                    Text(verbatim: localization.localized("Prayers"))
                 }
                 .tag(AppTab.prayers)
 
             AthkarView()
                 .tabItem {
                     Image(systemName: "bookmark")
-                    Text("Athkar")
+                    Text(verbatim: localization.localized("Athkar"))
                 }
                 .tag(AppTab.athkar)
 
             ServicesView()
                 .tabItem {
                     Image(systemName: "square.grid.2x2")
-                    Text("Services")
+                    Text(verbatim: localization.localized("Services"))
                 }
                 .tag(AppTab.services)
         }
