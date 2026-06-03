@@ -124,10 +124,10 @@ final class TaqwahCoreTests: XCTestCase {
 
     // MARK: - PrayerCompletion
 
-    func testPrayerCompletionMosqueUsesEmoji() {
-        XCTAssertEqual(PrayerCompletion.mosque.emoji, "🕌")
-        XCTAssertNil(PrayerCompletion.alone.emoji)
-        XCTAssertNil(PrayerCompletion.congregation.emoji)
+    func testPrayerCompletionUsesNoEmojiBadges() {
+        for type in PrayerCompletion.allCases {
+            XCTAssertNil(type.emoji)
+        }
     }
 
     func testPrayerCompletionAllCasesHaveLabels() {

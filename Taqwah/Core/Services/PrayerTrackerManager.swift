@@ -37,12 +37,9 @@ enum PrayerCompletion: String, Codable, CaseIterable, Identifiable {
         }
     }
 
-    /// Emoji shown in the colored badge (SF Symbols has no mosque glyph).
+    /// Kept for compatibility with older UI call sites; premium UI uses SF Symbols.
     var emoji: String? {
-        switch self {
-        case .mosque: return "🕌"
-        default:      return nil
-        }
+        nil
     }
 }
 

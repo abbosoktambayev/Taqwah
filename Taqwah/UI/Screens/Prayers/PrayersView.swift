@@ -109,10 +109,20 @@ struct PrayersView: View {
 
     // MARK: - Date Navigator
 
-    private var dateLabel: String {
-        if isToday { return "Today" }
-        if Calendar.current.isDateInYesterday(selectedDate) { return "Yesterday" }
+    @ViewBuilder
+    private var dateLabel: some View {
+        if isToday {
+            Text("Today")
+        } else if Calendar.current.isDateInYesterday(selectedDate) {
+            Text("Yesterday")
+        } else {
+            Text(verbatim: formattedSelectedDate)
+        }
+    }
+
+    private var formattedSelectedDate: String {
         let f = DateFormatter()
+        f.locale = LocalizationManager.shared.locale
         f.dateFormat = "EEEE, d MMM"
         return f.string(from: selectedDate)
     }
@@ -132,7 +142,7 @@ struct PrayersView: View {
             Spacer()
 
             VStack(spacing: 2) {
-                Text(dateLabel)
+                dateLabel
                     .font(.headline)
                     .foregroundColor(.adaptiveText(scheme))
                 if !isToday {
@@ -219,7 +229,11 @@ struct PrayersView: View {
                 Button {
                     tracker.mark(name, as: option, on: selectedDate)
                 } label: {
-                    Label(option.label, systemImage: option.icon)
+                    Label {
+                        Text(LocalizedStringKey(option.label))
+                    } icon: {
+                        Image(systemName: option.icon)
+                    }
                 }
             }
             if isDone {
@@ -260,9 +274,13 @@ struct PrayersView: View {
                         .foregroundColor(.adaptiveText(scheme))
 
                     if let type {
-                        Text("\(time) · \(type.label)")
-                            .font(.subheadline)
-                            .foregroundColor(.adaptiveAccent(scheme))
+                        HStack(spacing: 4) {
+                            Text(time)
+                            Text("·")
+                            Text(LocalizedStringKey(type.label))
+                        }
+                        .font(.subheadline)
+                        .foregroundColor(.adaptiveAccent(scheme))
                     } else {
                         Text(time)
                             .foregroundColor(.secondaryText(scheme))

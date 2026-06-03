@@ -38,10 +38,10 @@ struct HomeView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 26) {
                         headerSection
-                        todayFlowCard
-                        dailyAthkarSection
-                        nextPrayerSection
-                        todaysPrayerSection
+                        nowPrayerCard
+                        prayerTimelineSection
+                        contextualActionCard
+                        trackerSummaryCard
                     }
                     .padding(.top, 8)
                 }
@@ -136,7 +136,7 @@ struct HomeView: View {
         .padding(.horizontal)
     }
 
-    // MARK: - Today Worship Flow
+    // MARK: - Prayer Rhythm
 
     private struct FlowPresentation {
         let icon: String
@@ -186,86 +186,339 @@ struct HomeView: View {
     }
 
     @ViewBuilder
-    private var todayFlowCard: some View {
-        if manager.todayPrayer != nil {
+    private var nowPrayerCard: some View {
+        if manager.isLoading {
+            rhythmSurface {
+                VStack(alignment: .leading, spacing: 14) {
+                    Text("NOW")
+                        .font(.mono(10))
+                        .tracking(0.8)
+                        .foregroundColor(.ter)
+
+                    HStack(spacing: 12) {
+                        ProgressView()
+                            .tint(.adaptiveAccent(scheme))
+                        Text("Prayer times will load soon, inshaAllah.")
+                            .font(.subheadline)
+                            .foregroundColor(.secondaryText(scheme))
+                    }
+                }
+            }
+            .padding(.horizontal)
+        } else if manager.todayPrayer != nil {
             let p = flowPresentation(flowKind)
-            Group {
-                if let cat = p.athkar {
-                    NavigationLink { athkarDetailDestination(for: cat) } label: { flowCardBody(p) }
-                        .buttonStyle(.plain)
-                } else if p.opensPrayers {
-                    Button { AppRouter.shared.selectedTab = .prayers } label: { flowCardBody(p) }
-                        .buttonStyle(.plain)
-                } else {
-                    flowCardBody(p)
+            rhythmSurface {
+                VStack(alignment: .leading, spacing: 22) {
+                    HStack(alignment: .top, spacing: 16) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("NOW")
+                                .font(.mono(10))
+                                .tracking(0.8)
+                                .foregroundColor(.ter)
+
+                            Text(p.title)
+                                .font(.title2.weight(.bold))
+                                .foregroundColor(.adaptiveText(scheme))
+
+                            Text(p.subtitle)
+                                .font(.subheadline)
+                                .foregroundColor(.secondaryText(scheme))
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        Spacer(minLength: 8)
+
+                        ZStack {
+                            Circle()
+                                .fill(Color.goldDim)
+                                .frame(width: 54, height: 54)
+                            Image(systemName: p.icon)
+                                .font(.system(size: 22, weight: .semibold))
+                                .foregroundColor(.prayerAccent)
+                        }
+                    }
+
+                    Rectangle()
+                        .fill(Color.cardBorder(scheme))
+                        .frame(height: 1)
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(nextIsSunrise ? "Up Next" : "Next Prayer")
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(.ter)
+
+                        HStack(alignment: .firstTextBaseline) {
+                            Text(nextPrayerName)
+                                .font(.title3.weight(.semibold))
+                                .foregroundColor(.adaptiveText(scheme))
+
+                            Spacer()
+
+                            Text("at \(nextPrayerTime)")
+                                .font(.subheadline)
+                                .foregroundColor(.secondaryText(scheme))
+                        }
+
+                        Text(remainingTime)
+                            .font(.brandDisplay(58))
+                            .foregroundColor(.prayerAccent)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.72)
+                            .shadow(color: .accentShadow(scheme), radius: 10, y: 5)
+
+                        if nextIsSunrise {
+                            Text("Fajr ends at sunrise")
+                                .font(.caption)
+                                .foregroundColor(.ter)
+                        }
+                    }
                 }
             }
             .padding(.horizontal)
             .animation(.easeInOut(duration: 0.35), value: flowKind)
+        } else {
+            rhythmSurface {
+                Text("Prayer times will load soon, inshaAllah.")
+                    .font(.subheadline)
+                    .foregroundColor(.secondaryText(scheme))
+            }
+            .padding(.horizontal)
         }
     }
 
-    private func flowCardBody(_ p: FlowPresentation) -> some View {
-        let interactive = p.athkar != nil || p.opensPrayers
-        return HStack(spacing: 16) {
+    private func rhythmSurface<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        content()
+            .padding(22)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(RoundedRectangle(cornerRadius: 28).fill(Color.cardBackground(scheme)))
+            .overlay(RoundedRectangle(cornerRadius: 28).stroke(Color.cardBorder(scheme), lineWidth: 1))
+            .shadow(color: Color.black.opacity(scheme == .light ? 0.06 : 0.18), radius: 16, y: 8)
+    }
+
+    @ViewBuilder
+    private var prayerTimelineSection: some View {
+        if let prayer = manager.todayPrayer {
+            let events = prayer.salahEvents()
+            VStack(alignment: .leading, spacing: 16) {
+                HStack {
+                    Text("Prayer Timeline")
+                        .font(.headline)
+                        .foregroundColor(.adaptiveText(scheme))
+
+                    Spacer()
+
+                    Text("Today")
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(.adaptiveAccent(scheme))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Color.brandDim)
+                        .clipShape(Capsule())
+                }
+
+                timelineBar(events: events)
+                timelineLabels(events: events)
+            }
+            .padding(18)
+            .background(Color.cardBackground(scheme))
+            .clipShape(RoundedRectangle(cornerRadius: 28))
+            .overlay(
+                RoundedRectangle(cornerRadius: 28)
+                    .stroke(Color.cardBorder(scheme), lineWidth: 1)
+            )
+            .padding(.horizontal)
+        }
+    }
+
+    private func timelineBar(events: [PrayerEvent]) -> some View {
+        GeometryReader { geo in
+            let width = max(geo.size.width - 10, 1)
+            let progress = timelineProgress(events: events)
+
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(Color.progressTrack(scheme))
+                    .frame(height: 6)
+                    .position(x: geo.size.width / 2, y: 12)
+
+                Capsule()
+                    .fill(Color.prayerAccent)
+                    .frame(width: width * progress, height: 6)
+                    .position(x: 5 + (width * progress / 2), y: 12)
+                    .animation(.easeInOut(duration: 0.35), value: progress)
+
+                ForEach(events, id: \.name) { event in
+                    Circle()
+                        .fill(timelineNodeColor(event))
+                        .frame(width: 13, height: 13)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.cardBackground(scheme), lineWidth: 3)
+                        )
+                        .position(x: 5 + width * eventPosition(event, in: events), y: 12)
+                }
+
+                Circle()
+                    .fill(Color.prayerAccent)
+                    .frame(width: 17, height: 17)
+                    .overlay(
+                        Circle()
+                            .stroke(Color.cardBackground(scheme), lineWidth: 3)
+                    )
+                    .shadow(color: .accentShadow(scheme), radius: 8, y: 3)
+                    .position(x: 5 + width * progress, y: 12)
+            }
+        }
+        .frame(height: 24)
+    }
+
+    private func timelineLabels(events: [PrayerEvent]) -> some View {
+        let now = Date()
+        return HStack(alignment: .top, spacing: 0) {
+            ForEach(events, id: \.name) { event in
+                VStack(spacing: 4) {
+                    Text(event.name)
+                        .font(.caption2.weight(.semibold))
+                        .foregroundColor(timelineLabelColor(event, now: now))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+
+                    Text(timeString(for: event.date))
+                        .font(.caption2)
+                        .foregroundColor(.secondaryText(scheme))
+                        .lineLimit(1)
+                }
+                .frame(maxWidth: .infinity)
+            }
+        }
+    }
+
+    private func timelineProgress(events: [PrayerEvent], now: Date = Date()) -> CGFloat {
+        guard let start = events.first?.date, let end = events.last?.date, end > start else {
+            return 0
+        }
+        let raw = now.timeIntervalSince(start) / end.timeIntervalSince(start)
+        return CGFloat(min(max(raw, 0), 1))
+    }
+
+    private func eventPosition(_ event: PrayerEvent, in events: [PrayerEvent]) -> CGFloat {
+        guard let start = events.first?.date, let end = events.last?.date, end > start else {
+            return 0
+        }
+        let raw = event.date.timeIntervalSince(start) / end.timeIntervalSince(start)
+        return CGFloat(min(max(raw, 0), 1))
+    }
+
+    private func timelineNodeColor(_ event: PrayerEvent, now: Date = Date()) -> Color {
+        if event.name == nextPrayerName || (nextIsSunrise && event.name == "Fajr") {
+            return .prayerAccent
+        }
+        if event.date < now {
+            return .adaptiveAccent(scheme)
+        }
+        return .progressTrack(scheme)
+    }
+
+    private func timelineLabelColor(_ event: PrayerEvent, now: Date = Date()) -> Color {
+        if event.name == nextPrayerName || (nextIsSunrise && event.name == "Fajr") {
+            return .prayerAccent
+        }
+        if event.date < now {
+            return .adaptiveAccent(scheme)
+        }
+        return .secondaryText(scheme)
+    }
+
+    @ViewBuilder
+    private var contextualActionCard: some View {
+        if manager.todayPrayer != nil {
+            let p = flowPresentation(flowKind)
+            if let category = p.athkar {
+                let status = athkarProgress.status(for: category)
+                let actionTitle: LocalizedStringKey = status.isComplete ? "Review" : "Continue"
+
+                NavigationLink {
+                    athkarDetailDestination(for: category)
+                } label: {
+                    contextualActionBody(icon: p.icon, title: p.title, actionTitle: actionTitle) {
+                        contextualAthkarSubtitle(p, status: status)
+                    }
+                }
+                .buttonStyle(.plain)
+                .padding(.horizontal)
+            } else if p.opensPrayers {
+                Button {
+                    AppRouter.shared.selectedTab = .prayers
+                } label: {
+                    contextualActionBody(
+                        icon: p.icon,
+                        title: "Today's Prayers",
+                        actionTitle: "Open"
+                    ) {
+                        trackerSubtitle
+                    }
+                }
+                .buttonStyle(.plain)
+                .padding(.horizontal)
+            }
+        }
+    }
+
+    private func contextualActionBody<Subtitle: View>(
+        icon: String,
+        title: LocalizedStringKey,
+        actionTitle: LocalizedStringKey,
+        @ViewBuilder subtitle: () -> Subtitle
+    ) -> some View {
+        HStack(spacing: 14) {
             ZStack {
                 Circle()
                     .fill(Color.brandDim)
-                    .frame(width: 52, height: 52)
-                Image(systemName: p.icon)
-                    .font(.system(size: 22, weight: .medium))
-                    .foregroundColor(.mutedEmerald)
+                    .frame(width: 46, height: 46)
+                Image(systemName: icon)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.adaptiveAccent(scheme))
             }
 
             VStack(alignment: .leading, spacing: 3) {
-                Text("TODAY")
-                    .font(.mono(10)).tracking(0.8)
-                    .foregroundColor(.ter)
-                Text(p.title)
-                    .font(.headline)
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
                     .foregroundColor(.adaptiveText(scheme))
-                flowSubtitle(p)
+
+                subtitle()
+                    .font(.caption)
+                    .foregroundColor(.secondaryText(scheme))
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
             Spacer(minLength: 8)
 
-            if interactive {
-                Image(systemName: "chevron.right")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundColor(.ter)
-            }
+            Text(actionTitle)
+                .font(.caption.weight(.semibold))
+                .foregroundColor(.adaptiveAccent(scheme))
+
+            Image(systemName: "chevron.right")
+                .font(.caption.weight(.semibold))
+                .foregroundColor(.ter)
         }
-        .padding(18)
+        .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 28).fill(Color.cardBackground(scheme)))
-        .overlay(RoundedRectangle(cornerRadius: 28).stroke(Color.cardBorder(scheme), lineWidth: 1))
+        .background(Color.cardBackground(scheme))
+        .clipShape(RoundedRectangle(cornerRadius: 22))
+        .overlay(
+            RoundedRectangle(cornerRadius: 22)
+                .stroke(Color.cardBorder(scheme), lineWidth: 1)
+        )
     }
 
     @ViewBuilder
-    private func flowSubtitle(_ p: FlowPresentation) -> some View {
-        if let category = p.athkar {
-            let status = athkarProgress.status(for: category)
-            if status.isComplete {
-                Text("Completed today")
-                    .font(.subheadline)
-                    .foregroundColor(.secondaryText(scheme))
-                    .fixedSize(horizontal: false, vertical: true)
-            } else if status.completedCount > 0 {
-                Text("\(status.completedCount)/\(status.totalCount) done · Continue #\(status.resumeIndex + 1)")
-                    .font(.subheadline)
-                    .foregroundColor(.secondaryText(scheme))
-                    .fixedSize(horizontal: false, vertical: true)
-            } else {
-                Text(p.subtitle)
-                    .font(.subheadline)
-                    .foregroundColor(.secondaryText(scheme))
-                    .fixedSize(horizontal: false, vertical: true)
-            }
+    private func contextualAthkarSubtitle(_ p: FlowPresentation, status: AthkarCategoryProgressSnapshot) -> some View {
+        if status.isComplete {
+            Text("Completed today")
+        } else if status.completedCount > 0 {
+            Text("\(status.completedCount)/\(status.totalCount) done · Continue #\(status.resumeIndex + 1)")
         } else {
             Text(p.subtitle)
-                .font(.subheadline)
-                .foregroundColor(.secondaryText(scheme))
-                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
@@ -277,158 +530,76 @@ struct HomeView: View {
         )
     }
 
-    private var dailyAthkarSection: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack {
-                Text("Daily Athkar")
-                    .font(.title3)
-                    .bold()
-                    .foregroundColor(.adaptiveText(scheme))
-
-                Spacer()
-
-                Text("\(athkarProgress.dailyCoreCompletedCount())/\(AthkarProgressManager.dailyCoreCategories.count)")
-                    .font(.caption.weight(.semibold))
+    private var trackerSummaryCard: some View {
+        Button {
+            AppRouter.shared.selectedTab = .prayers
+        } label: {
+            HStack(spacing: 14) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 22, weight: .semibold))
                     .foregroundColor(.adaptiveAccent(scheme))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
+                    .frame(width: 42, height: 42)
                     .background(Color.brandDim)
-                    .clipShape(Capsule())
-            }
+                    .clipShape(Circle())
 
-            VStack(spacing: 10) {
-                ForEach(AthkarProgressManager.dailyCoreCategories) { category in
-                    NavigationLink { athkarDetailDestination(for: category) } label: {
-                        AthkarDailyStatusRow(status: athkarProgress.status(for: category))
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-        }
-        .padding(.horizontal)
-    }
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Prayer Tracker")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(.adaptiveText(scheme))
 
-    private var nextPrayerSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(nextIsSunrise ? "Up Next" : "Next Prayer")
-                .font(.title2)
-                .bold()
-                .foregroundColor(.adaptiveText(scheme))
-
-            VStack(spacing: 8) {
-                Text(nextPrayerName)
-                    .font(.title2)
-                    .bold()
-                    .foregroundColor(.adaptiveText(scheme))
-
-                Text(remainingTime)
-                    .font(.brandDisplay(52))
-                    .foregroundColor(.prayerAccent)
-                    .shadow(
-                        color: .accentShadow(scheme),
-                        radius: 10,
-                        y: 5
-                    )
-
-                Text("at \(nextPrayerTime)")
-                    .foregroundColor(.secondaryText(scheme))
-                    .padding(.top, 6)
-
-                // Sunrise is the end of the Fajr window, not a salah — clarify it.
-                if nextIsSunrise {
-                    Text("Fajr ends at sunrise")
+                    trackerSubtitle
                         .font(.caption)
-                        .foregroundColor(.ter)
+                        .foregroundColor(.secondaryText(scheme))
                 }
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 36)
-            .background(
-                ZStack {
-                    RoundedRectangle(cornerRadius: 28)
-                        .fill(Color.cardBackground(scheme))
 
-                    RoundedRectangle(cornerRadius: 28)
-                        .stroke(Color.cardBorder(scheme), lineWidth: 1)
-                }
+                Spacer(minLength: 8)
+
+                trackerMiniProgress
+
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundColor(.ter)
+            }
+            .padding(16)
+            .background(Color.cardBackground(scheme))
+            .clipShape(RoundedRectangle(cornerRadius: 22))
+            .overlay(
+                RoundedRectangle(cornerRadius: 22)
+                    .stroke(Color.cardBorder(scheme), lineWidth: 1)
             )
-            .shadow(
-                color: Color.black.opacity(scheme == .light ? 0.06 : 0.18),
-                radius: 16,
-                y: 8
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 28))
         }
+        .buttonStyle(.plain)
         .padding(.horizontal)
     }
 
-    private var todaysPrayerSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Today's Prayers")
-                .font(.title3)
-                .bold()
-                .foregroundColor(.adaptiveText(scheme))
-
-            if manager.isLoading {
-                ProgressView()
-                    .tint(.adaptiveText(scheme))
-                    .frame(maxWidth: .infinity)
-            } else if let prayer = manager.todayPrayer {
-                VStack(spacing: 14) {
-                    prayerRow(icon: "sunrise", name: "Fajr", time: prayer.displayTime(for: "Fajr"))
-                    prayerRow(icon: "sun.max.fill", name: "Dhuhr", time: prayer.displayTime(for: "Dhuhr"))
-                    prayerRow(icon: "sun.max", name: "Asr", time: prayer.displayTime(for: "Asr"))
-                    prayerRow(icon: "sunset", name: "Maghrib", time: prayer.displayTime(for: "Maghrib"))
-                    prayerRow(icon: "moon.stars", name: "Isha", time: prayer.displayTime(for: "Isha"))
-                }
-                .padding(.vertical, 18)
-                .background(
-                    Color.glassFill(scheme)
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 28))
-            } else if let error = manager.errorMessage {
-                Text(error)
-                    .foregroundColor(.dangerRed)
-                    .padding()
-            } else {
-                Text("Prayer times will load soon, inshaAllah.")
-                    .foregroundColor(.secondaryText(scheme))
-                    .italic()
-                    .padding()
-            }
+    @ViewBuilder
+    private var trackerSubtitle: some View {
+        let completed = tracker.completedCount(on: Date())
+        let total = PrayerTrackerManager.allPrayers.count
+        if completed >= total {
+            Text("Completed today")
+        } else {
+            Text("\(completed)/\(total) logged today")
         }
-        .padding(.horizontal)
     }
 
-    private func prayerRow(icon: String, name: String, time: String) -> some View {
-        HStack {
-            HStack(spacing: 12) {
-                Image(systemName: icon)
-                    .foregroundColor(.adaptiveAccent(scheme))
-                    .font(.system(size: 20))
-
-                Text(name)
-                    .foregroundColor(.adaptiveText(scheme))
-                    .fontWeight(.medium)
-            }
-
-            Spacer()
-
-            Text(time)
-                .foregroundColor(.secondaryText(scheme))
-                .fontWeight(.medium)
+    private var trackerMiniProgress: some View {
+        let progress = tracker.progress(on: Date())
+        return ZStack(alignment: .leading) {
+            Capsule()
+                .fill(Color.progressTrack(scheme))
+            Capsule()
+                .fill(Color.adaptiveAccent(scheme))
+                .frame(width: 54 * progress)
         }
-        .padding(.horizontal, 18)
-        .padding(.vertical, 14)
-        .background(
-            RoundedRectangle(cornerRadius: 28)
-                .fill(Color.cardBackground(scheme))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 28)
-                        .stroke(Color.cardBorder(scheme), lineWidth: 1)
-                )
-        )
-        .padding(.horizontal, 6)
+        .frame(width: 54, height: 7)
+    }
+
+    private func timeString(for date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        return formatter.string(from: date)
     }
 
     // MARK: - Logic
