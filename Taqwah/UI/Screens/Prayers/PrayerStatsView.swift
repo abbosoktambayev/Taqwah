@@ -186,18 +186,12 @@ struct PrayerStatsView: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(spacing: 10) {
-                        Group {
-                            if let emoji = type.emoji {
-                                Text(emoji).font(.system(size: 15))
-                            } else {
-                                Image(systemName: type.icon)
-                                    .font(.system(size: 15))
-                                    .foregroundColor(.adaptiveAccent(scheme))
-                            }
-                        }
+                        Image(systemName: type.icon)
+                            .font(.system(size: 15))
+                            .foregroundColor(.adaptiveAccent(scheme))
                         .frame(width: 22)
 
-                        Text(type.label)
+                        Text(LocalizedStringKey(type.label))
                             .font(.subheadline)
                             .foregroundColor(.adaptiveText(scheme))
 

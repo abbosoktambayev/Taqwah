@@ -16,6 +16,7 @@ struct PrayersView: View {
         "Maghrib": "sunset.fill",
         "Isha": "moon.stars.fill"
     ]
+    private let completionOptions = PrayerCompletion.allCases
 
     private var isToday: Bool {
         Calendar.current.isDateInToday(selectedDate)
@@ -29,20 +30,9 @@ struct PrayersView: View {
 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 24) {
-                        headerSection
+                        trackerHero
                         dateNavigator
-                        progressCard
-
-                        VStack(spacing: 16) {
-                            ForEach(PrayerTrackerManager.allPrayers, id: \.self) { prayerName in
-                                prayerRow(
-                                    name: prayerName,
-                                    time: timeForPrayer(prayerName),
-                                    icon: prayerIcons[prayerName] ?? "circle"
-                                )
-                            }
-                        }
-                        .animation(Motion.standard, value: tracker.revision)
+                        prayerCardsSection
                     }
                 }
                 .safeAreaPadding(.bottom, 96)
@@ -69,41 +59,84 @@ struct PrayersView: View {
         selectedPrayerDay()?.displayTime(for: name) ?? "--:--"
     }
 
-    // MARK: - Header
+    // MARK: - Hero
 
-    private var headerSection: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
+    private var trackerHero: some View {
+        let completed = tracker.completedCount(on: selectedDate)
+        let total = PrayerTrackerManager.allPrayers.count
+
+        return VStack(alignment: .leading, spacing: 18) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Group {
+                        if isToday {
+                            Text("TODAY")
+                        } else {
+                            Text("Progress")
+                        }
+                    }
+                        .font(.mono(10))
+                        .tracking(0.8)
+                        .foregroundColor(.ter)
+
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text("\(completed)/\(total)")
+                            .font(.brandDisplay(54))
+                            .foregroundColor(.adaptiveText(scheme))
+
+                        Text("Prayers Logged")
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(.secondaryText(scheme))
+                    }
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.78)
+
+                    HStack(spacing: 8) {
+                        Image(systemName: "flame.fill")
+                            .foregroundColor(.prayerAccent)
+
+                        Text("\(tracker.streak) days")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundColor(.prayerAccent)
+                    }
+                }
+
+                Spacer(minLength: 12)
+
+                Button {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    showStats = true
+                } label: {
+                    Image(systemName: "chart.bar.xaxis")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(.adaptiveAccent(scheme))
+                        .frame(width: 42, height: 42)
+                        .background(Color.brandDim)
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Statistics")
+            }
+
+            progressBar(progress: tracker.progress(on: selectedDate), height: 10)
+
+            HStack(spacing: 8) {
+                Image(systemName: "hand.tap.fill")
+                    .foregroundColor(.adaptiveAccent(scheme))
+                    .font(.caption)
+
                 Text("Track your daily prayers")
+                    .font(.caption)
                     .foregroundColor(.secondaryText(scheme))
             }
-
-            Spacer()
-
-            Button {
-                UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                showStats = true
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "flame.fill")
-                        .foregroundColor(.prayerAccent)
-
-                    Text("\(tracker.streak) days")
-                        .bold()
-                        .foregroundColor(.prayerAccent)
-
-                    Image(systemName: "chevron.right")
-                        .font(.caption2)
-                        .foregroundColor(Color.prayerAccent.opacity(0.7))
-                }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(Color.streakBackground(scheme))
-                .clipShape(Capsule())
-            }
-            .buttonStyle(.plain)
         }
-        .foregroundColor(.adaptiveText(scheme))
+        .padding(20)
+        .background(Color.cardBackground(scheme))
+        .clipShape(RoundedRectangle(cornerRadius: 28))
+        .overlay(
+            RoundedRectangle(cornerRadius: 28)
+                .stroke(Color.cardBorder(scheme), lineWidth: 1)
+        )
         .padding(.horizontal)
     }
 
@@ -178,94 +211,44 @@ struct PrayersView: View {
         }
     }
 
-    // MARK: - Progress Card
+    // MARK: - Prayer Cards
 
-    private var progressCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                Text(isToday ? "Today's Progress" : "Progress")
-                    .font(.headline)
-                    .foregroundColor(.adaptiveText(scheme))
-
-                Spacer()
-
-                Text("\(tracker.completedCount(on: selectedDate))/5")
-                    .bold()
-                    .foregroundColor(.adaptiveAccent(scheme))
+    private var prayerCardsSection: some View {
+        VStack(spacing: 14) {
+            ForEach(PrayerTrackerManager.allPrayers, id: \.self) { prayerName in
+                prayerRow(
+                    name: prayerName,
+                    time: timeForPrayer(prayerName),
+                    icon: prayerIcons[prayerName] ?? "circle"
+                )
             }
-
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    Capsule()
-                        .fill(Color.progressTrack(scheme))
-
-                    Capsule()
-                        .fill(Color.adaptiveAccent(scheme))
-                        .frame(width: geo.size.width * tracker.progress(on: selectedDate))
-                        .animation(.easeInOut(duration: 0.35), value: tracker.revision)
-                }
-            }
-            .frame(height: 10)
         }
-        .foregroundColor(.adaptiveText(scheme))
-        .padding()
-        .background(Color.cardBackground(scheme))
-        .clipShape(RoundedRectangle(cornerRadius: 25))
-        .overlay(
-            RoundedRectangle(cornerRadius: 25)
-                .stroke(Color.cardBorder(scheme), lineWidth: 1)
-        )
         .padding(.horizontal)
+        .animation(Motion.standard, value: tracker.revision)
     }
-
-    // MARK: - Prayer Row
 
     private func prayerRow(name: String, time: String, icon: String) -> some View {
         let type = tracker.completion(name, on: selectedDate)
         let isDone = type != nil
 
-        return Menu {
-            ForEach(PrayerCompletion.allCases) { option in
-                Button {
-                    tracker.mark(name, as: option, on: selectedDate)
-                } label: {
-                    Label {
-                        Text(LocalizedStringKey(option.label))
-                    } icon: {
-                        Image(systemName: option.icon)
-                    }
-                }
-            }
-            if isDone {
-                Divider()
-                Button(role: .destructive) {
-                    tracker.unmark(name, on: selectedDate)
-                } label: {
-                    Label("Mark as not prayed", systemImage: "xmark.circle")
-                }
-            }
-        } label: {
-            HStack(spacing: 16) {
+        return VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 14) {
                 ZStack {
-                    if let type {
-                        Circle()
-                            .fill(Color.adaptiveAccent(scheme))
-                            .frame(width: 48, height: 48)
-                            .shadow(color: .accentShadow(scheme), radius: 8)
+                    Circle()
+                        .fill(isDone ? Color.adaptiveAccent(scheme) : Color.clear)
+                        .frame(width: 48, height: 48)
+                        .overlay(
+                            Circle()
+                                .strokeBorder(
+                                    isDone ? Color.clear : Color.uncheckedBorder(scheme),
+                                    lineWidth: 2
+                                )
+                        )
+                        .shadow(color: isDone ? .accentShadow(scheme) : .clear, radius: 8)
 
-                        if let emoji = type.emoji {
-                            Text(emoji)
-                                .font(.system(size: 24))
-                        } else {
-                            Image(systemName: type.icon)
-                                .font(.headline)
-                                .foregroundColor(.parchment)
-                        }
-                    } else {
-                        Circle()
-                            .strokeBorder(Color.uncheckedBorder(scheme), lineWidth: 2)
-                            .frame(width: 48, height: 48)
-                    }
+                    Image(systemName: type?.icon ?? icon)
+                        .font(.headline)
+                        .foregroundColor(isDone ? .parchment : .secondaryText(scheme))
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
@@ -283,24 +266,92 @@ struct PrayersView: View {
                         .foregroundColor(.adaptiveAccent(scheme))
                     } else {
                         Text(time)
+                            .font(.subheadline)
                             .foregroundColor(.secondaryText(scheme))
                     }
                 }
 
                 Spacer()
+
+                if isDone {
+                    Button {
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        withAnimation(Motion.standard) {
+                            tracker.unmark(name, on: selectedDate)
+                        }
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 22, weight: .semibold))
+                            .foregroundColor(.secondaryText(scheme))
+                            .frame(width: 34, height: 34)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Mark as not prayed")
+                }
             }
-            .padding()
-            .background(Color.cardBackground(scheme))
-            .clipShape(RoundedRectangle(cornerRadius: 22))
-            .overlay(
-                RoundedRectangle(cornerRadius: 22)
-                    .stroke(isDone ? Color.adaptiveAccent(scheme).opacity(0.3) : Color.cardBorder(scheme), lineWidth: 1)
-            )
-            .scaleEffect(isDone ? 0.98 : 1.0)
-            .animation(Motion.standard, value: isDone)
+
+            HStack(spacing: 8) {
+                ForEach(completionOptions) { option in
+                    completionOptionButton(
+                        option,
+                        prayerName: name,
+                        isSelected: type == option
+                    )
+                }
+            }
+        }
+        .padding(16)
+        .background(Color.cardBackground(scheme))
+        .clipShape(RoundedRectangle(cornerRadius: 22))
+        .overlay(
+            RoundedRectangle(cornerRadius: 22)
+                .stroke(isDone ? Color.adaptiveAccent(scheme).opacity(0.3) : Color.cardBorder(scheme), lineWidth: 1)
+        )
+        .scaleEffect(isDone ? 0.98 : 1.0)
+        .animation(Motion.standard, value: isDone)
+    }
+
+    private func completionOptionButton(
+        _ option: PrayerCompletion,
+        prayerName: String,
+        isSelected: Bool
+    ) -> some View {
+        Button {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            withAnimation(Motion.standard) {
+                tracker.mark(prayerName, as: option, on: selectedDate)
+            }
+        } label: {
+            HStack(spacing: 5) {
+                Image(systemName: option.icon)
+                    .font(.caption.weight(.semibold))
+                Text(LocalizedStringKey(option.shortLabel))
+                    .font(.caption.weight(.semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+            }
+            .foregroundColor(isSelected ? .parchment : .adaptiveAccent(scheme))
+            .frame(maxWidth: .infinity)
+            .frame(height: 36)
+            .background(isSelected ? Color.adaptiveAccent(scheme) : Color.brandDim)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(.plain)
-        .padding(.horizontal)
+    }
+
+    private func progressBar(progress: CGFloat, height: CGFloat) -> some View {
+        GeometryReader { geo in
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(Color.progressTrack(scheme))
+
+                Capsule()
+                    .fill(Color.adaptiveAccent(scheme))
+                    .frame(width: geo.size.width * progress)
+                    .animation(.easeInOut(duration: 0.35), value: tracker.revision)
+            }
+        }
+        .frame(height: height)
     }
 }
 
