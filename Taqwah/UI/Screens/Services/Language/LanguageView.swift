@@ -19,132 +19,64 @@ struct LanguageView: View {
         LanguageOption(name: "Kazakh", nativeName: "Қазақша", code: "kk", flag: "🇰🇿", isAvailable: true),
         LanguageOption(name: "Uzbek", nativeName: "Oʻzbekcha", code: "uz", flag: "🇺🇿", isAvailable: true),
         LanguageOption(name: "Kyrgyz", nativeName: "Кыргызча", code: "ky", flag: "🇰🇬", isAvailable: false),
-        LanguageOption(name: "Azerbaijani", nativeName: "Azərbaycanca", code: "az", flag: "🇦🇿", isAvailable: false),
+        LanguageOption(name: "Azerbaijani", nativeName: "Azərbaycanca", code: "az", flag: "🇦🇿", isAvailable: false)
     ]
-    
+
     var body: some View {
-        ZStack {
-            AppBackground()
-            
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 24) {
-                    
-                    sectionLabel("SELECT LANGUAGE")
-                    
-                    VStack(spacing: 0) {
-                        ForEach(Array(languages.enumerated()), id: \.element.id) { index, lang in
-                            Button {
-                                guard lang.isAvailable else { return }
-                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                localization.setLanguage(lang.code)
-                            } label: {
-                                HStack(spacing: 14) {
-                                    Text(lang.flag)
-                                        .font(.title2)
+        List {
+            Section {
+                ForEach(languages) { lang in
+                    Button {
+                        guard lang.isAvailable else { return }
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        localization.setLanguage(lang.code)
+                    } label: {
+                        HStack(spacing: 12) {
+                            Text(lang.flag)
+                                .font(.title2)
 
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(lang.name)
-                                            .font(.system(size: 16, weight: .medium))
-                                            .foregroundColor(lang.isAvailable ? .adaptiveText(scheme) : .secondaryText(scheme))
-
-                                        Text(lang.nativeName)
-                                            .font(.caption)
-                                            .foregroundColor(.secondaryText(scheme))
-                                    }
-
-                                    Spacer()
-
-                                    if !lang.isAvailable {
-                                        Text("Coming Soon")
-                                            .font(.caption.weight(.medium))
-                                            .foregroundColor(.secondaryText(scheme))
-                                            .padding(.horizontal, 10)
-                                            .padding(.vertical, 4)
-                                            .background(Capsule().fill(Color.glassFill(scheme)))
-                                            .overlay(Capsule().stroke(Color.glassBorder(scheme), lineWidth: 1))
-                                    } else if localization.languageCode == lang.code {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .foregroundColor(.adaptiveAccent(scheme))
-                                            .font(.title3)
-                                    } else {
-                                        Image(systemName: "circle")
-                                            .foregroundColor(.uncheckedBorder(scheme))
-                                            .font(.title3)
-                                    }
-                                }
-                                .padding(.vertical, 10)
-                                .opacity(lang.isAvailable ? 1 : 0.6)
-                                .contentShape(Rectangle())
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(LocalizedStringKey(lang.name))
+                                    .foregroundStyle(lang.isAvailable ? Color.adaptiveText(scheme) : Color.secondaryText(scheme))
+                                Text(lang.nativeName)
+                                    .font(.caption)
+                                    .foregroundStyle(Color.secondaryText(scheme))
                             }
-                            .buttonStyle(.plain)
 
-                            if index < languages.count - 1 {
-                                Rectangle()
-                                    .fill(Color.dividerColor(scheme))
-                                    .frame(height: 1)
-                                    .padding(.vertical, 4)
+                            Spacer()
+
+                            if !lang.isAvailable {
+                                Text("Coming Soon")
+                                    .font(.caption)
+                                    .foregroundStyle(Color.secondaryText(scheme))
+                            } else if localization.languageCode == lang.code {
+                                Image(systemName: "checkmark")
+                                    .font(.body.weight(.semibold))
+                                    .foregroundStyle(Color.adaptiveAccent(scheme))
                             }
                         }
+                        .contentShape(Rectangle())
                     }
-                    .padding(16)
-                    .background(
-                        RoundedRectangle(cornerRadius: 28)
-                            .fill(Color.glassFill(scheme))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 28)
-                            .stroke(Color.glassBorder(scheme), lineWidth: 1)
-                    )
-                    .padding(.horizontal)
-                    
-                    // Info note
-                    HStack(alignment: .top, spacing: 10) {
-                        Image(systemName: "globe")
-                            .foregroundColor(.adaptiveAccent(scheme))
-                            .font(.subheadline)
-                        
-                        Text("More languages will be available in future updates. If you'd like to help translate Taqwah, please contact us through the Support page.")
-                            .font(.caption)
-                            .foregroundColor(.secondaryText(scheme))
-                    }
-                    .padding(16)
-                    .background(
-                        RoundedRectangle(cornerRadius: 28)
-                            .fill(Color.adaptiveAccent(scheme).opacity(0.08))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 28)
-                            .stroke(Color.adaptiveAccent(scheme).opacity(0.2), lineWidth: 1)
-                    )
-                    .padding(.horizontal)
-                    
-                    Spacer(minLength: 32)
+                    .buttonStyle(.plain)
+                    .disabled(!lang.isAvailable)
+                    .listRowBackground(Color.cardBackground(scheme))
                 }
-                .padding(.top, 8)
+            } footer: {
+                Text("More languages will be available in future updates. If you'd like to help translate Taqwah, please contact us through the Support page.")
             }
         }
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .background(AppBackground())
         .navigationTitle("Language")
         .navigationBarTitleDisplayMode(.inline)
-    }
-    
-    private func sectionLabel(_ text: String) -> some View {
-        Text(LocalizedStringKey(text))
-            .font(.mono(11)).tracking(0.6)
-            .foregroundColor(.sectionTitle(scheme))
-            .padding(.horizontal)
     }
 }
 
 #Preview("Dark") {
-    NavigationStack {
-        LanguageView()
-    }
-    .preferredColorScheme(.dark)
+    NavigationStack { LanguageView() }.preferredColorScheme(.dark)
 }
 
 #Preview("Light") {
-    NavigationStack {
-        LanguageView()
-    }
-    .preferredColorScheme(.light)
+    NavigationStack { LanguageView() }.preferredColorScheme(.light)
 }

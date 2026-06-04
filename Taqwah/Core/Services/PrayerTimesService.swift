@@ -29,12 +29,25 @@ final class PrayerTimesService {
 
     // MARK: - Muftiyat KZ (whole year in one request)
 
+    /// Beyond this distance (km) from the nearest Muftiyat city we treat the
+    /// location as outside Kazakhstan and let the caller fall back to Aladhan.
+    private let muftyatMaxCityDistanceKm = 100.0
+
     private func fetchMuftyatYear(
         year: Int,
         latitude: Double,
         longitude: Double
     ) async throws -> [PrayerDay] {
-        let urlString = "https://api.muftyat.kz/prayer-times/\(year)/\(latitude)/\(longitude)"
+        // The prayer-times endpoint only answers for EXACT city coordinates, so
+        // resolve the nearest Muftiyat city first and query with its coordinates.
+        let city = try await nearestMuftyatCity(latitude: latitude, longitude: longitude)
+
+        // Out of Kazakhstan → signal "not covered" so we fall back to Aladhan.
+        if let distance = city.distance, distance > muftyatMaxCityDistanceKm {
+            throw ServiceError.outOfCoverage
+        }
+
+        let urlString = "https://api.muftyat.kz/prayer-times/\(year)/\(city.lat)/\(city.lng)"
         guard let url = URL(string: urlString) else { throw ServiceError.invalidURL }
 
         let request = URLRequest(url: url, timeoutInterval: 30)
@@ -42,7 +55,23 @@ final class PrayerTimesService {
         try Self.validate(response)
 
         let decoded = try JSONDecoder().decode(MuftyatResponse.self, from: data)
-        return decoded.toPrayerDays().sorted { $0.date < $1.date }
+        let days = decoded.toPrayerDays().sorted { $0.date < $1.date }
+        guard !days.isEmpty else { throw ServiceError.noData }
+        return days
+    }
+
+    /// Resolve the nearest Muftiyat city; the API computes distance server-side.
+    private func nearestMuftyatCity(latitude: Double, longitude: Double) async throws -> MuftyatCity {
+        let urlString = "https://api.muftyat.kz/cities/?lat=\(latitude)&lng=\(longitude)"
+        guard let url = URL(string: urlString) else { throw ServiceError.invalidURL }
+
+        let request = URLRequest(url: url, timeoutInterval: 30)
+        let (data, response) = try await URLSession.shared.data(for: request)
+        try Self.validate(response)
+
+        let decoded = try JSONDecoder().decode(MuftyatCitiesResponse.self, from: data)
+        guard let city = decoded.results.first else { throw ServiceError.outOfCoverage }
+        return city
     }
 
     // MARK: - Aladhan (one request per month)
@@ -110,12 +139,14 @@ enum ServiceError: Error, LocalizedError {
     case invalidURL
     case noData
     case httpStatus(Int)
+    case outOfCoverage
 
     var errorDescription: String? {
         switch self {
         case .invalidURL: return "Invalid URL for prayer times API"
         case .noData: return "No data received from prayer times API"
         case .httpStatus(let code): return "Prayer times API returned status \(code)"
+        case .outOfCoverage: return "Location is outside this provider's coverage"
         }
     }
 }

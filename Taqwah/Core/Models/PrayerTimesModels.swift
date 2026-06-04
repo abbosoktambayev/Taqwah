@@ -75,6 +75,18 @@ struct MuftyatResponse: Decodable {
     }
 }
 
+// MARK: - Muftiyat Cities (nearest-city resolution for exact-coordinate API)
+
+struct MuftyatCitiesResponse: Decodable {
+    let results: [MuftyatCity]
+}
+
+struct MuftyatCity: Decodable {
+    let lat: String
+    let lng: String
+    let distance: Double?   // km from the queried coordinates (server-computed)
+}
+
 struct MuftyatDay: Decodable {
     let fajr: String
     let sunrise: String

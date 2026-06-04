@@ -6,6 +6,7 @@ struct ScreenshotShareBanner: View {
     let onDismiss: () -> Void
 
     @Environment(\.colorScheme) private var scheme
+    @State private var dragY: CGFloat = 0
 
     var body: some View {
         HStack(spacing: 14) {
@@ -54,11 +55,21 @@ struct ScreenshotShareBanner: View {
             radius: 14,
             y: 8
         )
+        .offset(y: dragY)
         .gesture(
-            DragGesture(minimumDistance: 12)
+            DragGesture(minimumDistance: 8)
+                .onChanged { value in
+                    // Follow the finger upward; resist downward pulls.
+                    dragY = value.translation.height < 0
+                        ? value.translation.height
+                        : value.translation.height / 6
+                }
                 .onEnded { value in
-                    guard value.translation.height < -18 else { return }
-                    onDismiss()
+                    if value.translation.height < -40 {
+                        onDismiss()
+                    } else {
+                        withAnimation(.easeOut(duration: 0.25)) { dragY = 0 }
+                    }
                 }
         )
     }

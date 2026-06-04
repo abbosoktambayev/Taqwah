@@ -30,8 +30,8 @@ struct ContentView: View {
 
             ServicesView()
                 .tabItem {
-                    Image(systemName: "square.grid.2x2")
-                    Text(verbatim: localization.localized("Services"))
+                    Image(systemName: "gearshape.fill")
+                    Text(verbatim: localization.localized("Settings"))
                 }
                 .tag(AppTab.services)
         }

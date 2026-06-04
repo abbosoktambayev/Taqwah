@@ -201,15 +201,18 @@ struct AthkarDailyStatusRow: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundColor(.adaptiveText(scheme))
 
-                HStack(spacing: 6) {
+                HStack(spacing: 8) {
                     Text("\(status.completedCount)/\(status.totalCount) done")
+                        .foregroundColor(.secondaryText(scheme))
                     if status.streak > 0 {
-                        Text("·")
-                        Text("\(status.streak)d streak")
+                        HStack(spacing: 3) {
+                            Image(systemName: "flame.fill")
+                            Text("\(status.streak)")
+                        }
+                        .foregroundColor(.prayerAccent)
                     }
                 }
                 .font(.caption)
-                .foregroundColor(.secondaryText(scheme))
             }
 
             Spacer(minLength: 8)

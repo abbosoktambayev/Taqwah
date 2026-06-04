@@ -57,12 +57,17 @@ struct ScreenshotSharePromptModifier: ViewModifier {
     }
 
     private func shouldShowPrompt(screenshotCount: Int) -> Bool {
+        #if DEBUG
+        // Always show while developing so the prompt is easy to verify.
+        return true
+        #else
+        // Production: at most once per hour, so it nudges without nagging.
         if let lastShown = defaults.object(forKey: Keys.lastShownDate) as? Date,
-           Calendar.current.isDateInToday(lastShown) {
+           Date().timeIntervalSince(lastShown) < 60 * 60 {
             return false
         }
-
-        return screenshotCount >= 1
+        return true
+        #endif
     }
 
     private func presentPrompt() {
